@@ -1,0 +1,52 @@
+<div class="review-list">
+  <div class="review-summary" *ngIf="!isLoading">
+    <div class="rating-display">
+        <div class="average-rating">
+          <span class="rating-number">{{ averageRating.toFixed(1) }}</span>
+          <div class="stars">
+            <span *ngFor="let i of [1,2,3,4,5]" 
+                  [class.filled]="i <= roundRating()" 
+                  [class.empty]="i > roundRating()"
+                  class="star">★</span>
+          </div>
+          <span class="total-reviews">({{ totalReviews }} {{ totalReviews === 1 ? 'reseña' : 'reseñas' }})</span>
+        </div>
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="isLoading">
+    <p>Cargando reseñas...</p>
+  </div>
+
+  <div class="error-message" *ngIf="hasError && !isLoading">
+    <p>{{ errorMessage }}</p>
+    <p class="error-hint">Abre la consola del navegador (F12) para ver más detalles. Verifica las reglas de seguridad de Firestore.</p>
+  </div>
+
+  <div class="reviews-container" *ngIf="!isLoading && !hasError">
+    <div class="review-item" *ngFor="let review of reviews">
+      <div class="review-header">
+        <div class="review-author">
+          <strong>{{ review.isAnonymous ? 'Anónimo' : (review.authorName || 'Usuario') }}</strong>
+        </div>
+        <div class="review-date">{{ formatDate(review.createdAt) }}</div>
+      </div>
+      
+      <div class="review-rating">
+        <span *ngFor="let i of [1,2,3,4,5]" 
+              [class.filled]="i <= review.rating" 
+              [class.empty]="i > review.rating"
+              class="star">★</span>
+      </div>
+      
+      <div class="review-comment">
+        {{ review.comment }}
+      </div>
+    </div>
+
+    <div class="no-reviews" *ngIf="reviews.length === 0">
+      <p>No hay reseñas aún. ¡Sé el primero en dejar una opinión!</p>
+    </div>
+  </div>
+</div>
+

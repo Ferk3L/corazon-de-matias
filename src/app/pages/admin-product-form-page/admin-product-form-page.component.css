@@ -1,0 +1,57 @@
+.admin-product-form { min-height: 100vh; background: #f1f5f9; padding: 2rem; }
+.form-container { max-width: 780px; margin: 0 auto; }
+.form-header { display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem; }
+.back-btn { color: #FF6B9D; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+.form-header h1 { font-size: 1.5rem; color: #1e293b; margin: 0; }
+.form-content { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.error-message { background: #fef2f2; border: 1px solid #fca5a5; color: #dc2626; border-radius: 10px; padding: 12px 16px; margin-bottom: 1.5rem; font-size: 0.9rem; }
+
+.form-group { margin-bottom: 1.2rem; }
+.form-group label { display: block; font-weight: 700; font-size: 0.88rem; color: #374151; margin-bottom: 6px; }
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%; padding: 10px 14px; border: 2px solid #e5e7eb;
+  border-radius: 10px; font-size: 0.9rem; outline: none; font-family: inherit;
+  transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group textarea:focus { border-color: #FF6B9D; }
+.form-group textarea { resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* Imagen */
+.imagen-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 10px; }
+.imagen-opcion {
+  border: 2px solid #e5e7eb; border-radius: 10px; overflow: hidden;
+  cursor: pointer; text-align: center; padding: 8px; transition: all 0.2s;
+}
+.imagen-opcion:hover { border-color: #FF6B9D; }
+.imagen-opcion.selected { border-color: #FF6B9D; background: #fff5f8; }
+.imagen-opcion img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; }
+.imagen-opcion span { font-size: 11px; color: #374151; display: block; margin-top: 4px; }
+.imagen-selected { font-size: 12px; color: #16a34a; margin: 4px 0 0; }
+
+/* Precios */
+.precios-section { background: #f8fafc; border-radius: 12px; padding: 1.2rem; margin-bottom: 1.2rem; }
+.precios-section h3 { font-size: 1rem; color: #1e293b; margin: 0 0 1rem; }
+.precio-input { display: flex; align-items: center; gap: 8px; }
+.precio-input span { font-size: 1.1rem; font-weight: 700; color: #64748b; }
+.precio-input small { color: #94a3b8; font-size: 0.85rem; }
+.precio-input input { flex: 1; }
+.precio-hint { font-size: 11px; color: #94a3b8; margin: 4px 0 0; }
+
+/* Checkboxes */
+.checkboxes { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
+.checkbox-item { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.9rem; color: #374151; }
+.checkbox-item input { width: 18px; height: 18px; accent-color: #FF6B9D; cursor: pointer; }
+
+/* Acciones */
+.form-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.cancel-btn { padding: 10px 20px; border: 2px solid #e2e8f0; background: white; border-radius: 10px; cursor: pointer; font-weight: 600; color: #64748b; text-decoration: none; display: inline-flex; align-items: center; }
+.submit-btn { padding: 10px 24px; background: linear-gradient(135deg, #FF6B9D, #C06C84); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.95rem; transition: all 0.2s; }
+.submit-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; }
+  .imagen-grid { grid-template-columns: repeat(2,1fr); }
+  .admin-product-form { padding: 1rem; }
+}

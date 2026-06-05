@@ -1,0 +1,42 @@
+<div class="qr-page">
+  <div class="qr-card">
+
+    @if (estado() === 'cargando') {
+      <div class="estado-cargando">
+        <div class="spinner"></div>
+        <p>Procesando tu cashback...</p>
+      </div>
+    }
+
+    @if (estado() === 'exito') {
+      <div class="estado-exito">
+        <div class="icono-exito">🎉</div>
+        <h1>¡Cashback aplicado!</h1>
+        <div class="monto-cashback">${{ monto().toFixed(2) }}</div>
+        <p>Se agregaron <strong>${{ monto().toFixed(2) }}</strong> a tu saldo de cashback.</p>
+        <p class="subtexto">Úsalo en tu próxima compra 💰</p>
+        <a routerLink="/clientes/mi-cuenta" class="btn-primary">Ver mi saldo</a>
+      </div>
+    }
+
+    @if (estado() === 'error') {
+      <div class="estado-error">
+        <div class="icono-error">❌</div>
+        <h1>QR no válido</h1>
+        <p>{{ mensaje() }}</p>
+        <a routerLink="/clientes/mi-cuenta" class="btn-secondary">Ir a mi cuenta</a>
+      </div>
+    }
+
+    @if (estado() === 'no-logueado') {
+      <div class="estado-login">
+        <div class="icono-login">🔐</div>
+        <h1>Inicia sesión primero</h1>
+        <p>Necesitas iniciar sesión para recibir tu cashback.</p>
+        <button (click)="reintentarConLogin()" class="btn-primary">Iniciar sesión</button>
+        <a routerLink="/clientes/registro" class="btn-secondary">Crear cuenta</a>
+      </div>
+    }
+
+  </div>
+</div>

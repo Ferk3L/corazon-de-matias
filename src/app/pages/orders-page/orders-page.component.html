@@ -1,0 +1,188 @@
+<div class="orders-page">
+
+  <!-- Hero -->
+  <section class="orders-hero">
+    <div class="orders-hero-content">
+      <span class="hero-badge">🍬 Pedidos</span>
+      <h1>Haz tu pedido</h1>
+      <p>Completa el formulario y te contactamos por WhatsApp</p>
+    </div>
+  </section>
+
+  <div class="orders-container">
+
+    <!-- Aviso WhatsApp rápido -->
+    <div class="whatsapp-card" (click)="quickOrder()">
+      <div class="wa-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
+      </div>
+      <div>
+        <strong>¿Prefieres ordenar directo?</strong>
+        <p>Escríbenos por WhatsApp ahora mismo</p>
+      </div>
+      <span class="wa-arrow">→</span>
+    </div>
+
+    <div class="orders-grid">
+
+      <!-- FORMULARIO -->
+      <div class="form-card">
+        <h2>Formulario de pedido</h2>
+
+        <!-- Banner cliente logueado -->
+        @if (clienteLogueado()) {
+          <div class="cliente-banner">
+            <div class="cliente-banner-avatar">{{ nombre[0]?.toUpperCase() || '👤' }}</div>
+            <div>
+              <strong>Hola, {{ nombre.split(' ')[0] }}</strong>
+              <p>Tu información está lista · Saldo: <strong class="saldo-verde">${{ clienteSaldo().toFixed(2) }}</strong></p>
+            </div>
+          </div>
+        } @else {
+          <div class="login-tip">
+            💡 <a routerLink="/clientes/login">Inicia sesión</a> para autocompletar tus datos y ganar cashback
+          </div>
+        }
+
+        <!-- Nombre (visible solo si no logueado o si está vacío) -->
+        @if (!clienteLogueado()) {
+          <div class="form-row-2">
+            <div class="field">
+              <label>Nombre completo *</label>
+              <input type="text" [(ngModel)]="nombre" name="nombre" placeholder="Tu nombre completo" />
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" [(ngModel)]="email" name="email" placeholder="tu@email.com" />
+            </div>
+          </div>
+        }
+
+        <!-- Teléfono siempre visible -->
+        <div class="field">
+          <label>Teléfono *</label>
+          <input type="tel" [(ngModel)]="phone" name="phone" placeholder="618 000 0000" />
+        </div>
+
+        <!-- Producto y cantidad -->
+        <div class="form-row-2">
+          <div class="field">
+            <label>Producto *</label>
+            <select [(ngModel)]="productId" name="productId" (change)="onProductChange()">
+              <option value="">Selecciona un producto</option>
+              @for (p of products(); track p.id) {
+                <option [value]="p.id">{{ p.name }} — ${{ p.price }}/kg</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label>Cantidad (kg) *</label>
+            <input type="number" [(ngModel)]="quantity" name="quantity" min="1" />
+          </div>
+        </div>
+
+        <!-- Resumen precio -->
+        @if (productId) {
+          <div class="precio-resumen">
+            <span>Subtotal</span>
+            <strong class="precio-monto">${{ getTotal().toFixed(2) }}</strong>
+            @if (usarCashback() && clienteSaldo() > 0) {
+              <span class="descuento">− ${{ clienteSaldo().toFixed(2) }} cashback</span>
+              <strong class="precio-final">${{ getTotalFinal().toFixed(2) }}</strong>
+            }
+          </div>
+        }
+
+        <!-- Usar cashback -->
+        @if (clienteLogueado() && clienteSaldo() > 0) {
+          <label class="cashback-toggle">
+            <input type="checkbox" [checked]="usarCashback()" (change)="usarCashback.set(!usarCashback())" />
+            <span class="toggle-content">
+              <span class="toggle-icon">💰</span>
+              <span>Usar saldo cashback <strong>(${{ clienteSaldo().toFixed(2) }})</strong></span>
+            </span>
+          </label>
+        }
+
+        <!-- Tipo de entrega -->
+        <div class="field">
+          <label>Tipo de entrega *</label>
+          <div class="entrega-grid">
+            <div class="entrega-btn" [class.active]="!esADomicilio" (click)="esADomicilio = false">
+              <span class="entrega-emoji">🏪</span>
+              <strong>Recoger en fábrica</strong>
+              <small>Sin costo extra</small>
+            </div>
+            <div class="entrega-btn" [class.active]="esADomicilio" (click)="esADomicilio = true">
+              <span class="entrega-emoji">🚚</span>
+              <strong>A domicilio</strong>
+              <small>2-3 días hábiles</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dirección (solo si domicilio) -->
+        @if (esADomicilio) {
+          <div class="field">
+            <label>Dirección de entrega *</label>
+            <textarea [(ngModel)]="address" name="address" rows="2"
+              placeholder="Calle, número, colonia, ciudad..."></textarea>
+          </div>
+        }
+
+        <!-- Notas -->
+        <div class="field">
+          <label>Notas adicionales <small>(opcional)</small></label>
+          <textarea [(ngModel)]="notes" name="notes" rows="2"
+            placeholder="¿Alguna indicación especial?"></textarea>
+        </div>
+
+        @if (error()) {
+          <div class="alert alert-error">⚠️ {{ error() }}</div>
+        }
+        @if (success()) {
+          <div class="alert alert-success">
+            ✅ ¡Pedido enviado! Revisa WhatsApp para continuar.
+          </div>
+        }
+
+        <button class="btn-enviar" (click)="enviarPedido()" [disabled]="isLoading()">
+          @if (isLoading()) {
+            <span class="btn-spinner"></span> Enviando...
+          } @else {
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+            </svg>
+            Enviar pedido por WhatsApp
+          }
+        </button>
+      </div>
+
+      <!-- INFO -->
+      <div class="info-col">
+        <div class="info-card">
+          <h3>📦 Envíos</h3>
+          <p>Realizamos envíos a toda la zona metropolitana de Durango en 2-3 días hábiles.</p>
+        </div>
+        <div class="info-card">
+          <h3>🏪 Recoger en fábrica</h3>
+          <p>Puedes pasar directamente a recoger tu pedido sin costo adicional.</p>
+        </div>
+        <div class="info-card">
+          <h3>💳 Métodos de pago</h3>
+          <p>Transferencia bancaria, depósito y pago contra entrega.</p>
+        </div>
+        @if (!clienteLogueado()) {
+          <div class="info-card cashback-promo">
+            <h3>💰 ¿Sabías que...</h3>
+            <p>Al registrarte como cliente frecuente ganas <strong>5% cashback</strong> en cada compra de 5kg o más.</p>
+            <a routerLink="/clientes/registro" class="btn-registro">Crear cuenta gratis →</a>
+          </div>
+        }
+      </div>
+
+    </div>
+  </div>
+</div>

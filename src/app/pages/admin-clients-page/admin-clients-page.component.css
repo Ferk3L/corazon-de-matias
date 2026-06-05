@@ -1,0 +1,409 @@
+.admin-clients {
+  padding: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Header */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.section-header h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0 0 0.3rem;
+}
+
+.section-header p {
+  color: #888;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Botones */
+.btn-primary {
+  background: linear-gradient(135deg, #F67280, #FF6B9D);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 157, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-back {
+  background: none;
+  border: 2px solid #e0e0e0;
+  color: #666;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-back:hover {
+  border-color: #FF6B9D;
+  color: #FF6B9D;
+}
+
+/* Buscador */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 14px;
+  padding: 0.7rem 1rem;
+  margin-bottom: 1.5rem;
+  transition: border-color 0.2s;
+}
+
+.search-bar:focus-within {
+  border-color: #FF6B9D;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
+  width: 100%;
+  color: #333;
+}
+
+/* Loading */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem;
+  color: #888;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255, 107, 157, 0.2);
+  border-top-color: #FF6B9D;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #aaa;
+}
+
+.empty-state span {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.8rem;
+}
+
+/* Grid clientes */
+.clientes-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.cliente-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: white;
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.cliente-card:hover {
+  border-color: #FF6B9D;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 157, 0.15);
+}
+
+.cliente-avatar {
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, #F67280, #FF6B9D);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.cliente-info {
+  flex: 1;
+}
+
+.cliente-info h3 {
+  font-size: 1rem;
+  color: #333;
+  margin: 0 0 0.2rem;
+}
+
+.cliente-email, .cliente-tel, .cliente-fecha {
+  font-size: 0.8rem;
+  color: #888;
+  margin: 0.1rem 0 0;
+}
+
+.cliente-cashback {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.cashback-label {
+  display: block;
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+.cashback-monto {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #38a169;
+}
+
+/* Detalle */
+.detalle-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.detalle-header h2 {
+  font-size: 1.3rem;
+  color: #333;
+  margin: 0;
+}
+
+.detalle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.detalle-info-card, .ajuste-card, .historial-card, .registro-card, .saldo-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.3rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  margin-bottom: 1rem;
+}
+
+.detalle-info-card h3, .ajuste-card h3, .historial-card h3 {
+  font-size: 1rem;
+  color: #333;
+  margin: 0 0 1rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+/* Saldo card */
+.saldo-card {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.saldo-label {
+  font-size: 0.9rem;
+  color: #888;
+  margin: 0 0 0.5rem;
+}
+
+.saldo-monto {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #38a169;
+  margin: 0;
+}
+
+/* Ajuste form */
+.ajuste-hint {
+  font-size: 0.85rem;
+  color: #888;
+  margin: -0.5rem 0 1rem;
+}
+
+.tipo-selector {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.tipo-btn {
+  flex: 1;
+  padding: 0.6rem;
+  border-radius: 10px;
+  border: 2px solid #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: white;
+  transition: all 0.2s;
+}
+
+.tipo-btn.sumar.active {
+  background: #f0fff4;
+  border-color: #38a169;
+  color: #38a169;
+}
+
+.tipo-btn.restar.active {
+  background: #fff5f5;
+  border-color: #e53e3e;
+  color: #e53e3e;
+}
+
+.ajuste-inputs {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.form-group input {
+  padding: 0.7rem 0.9rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #FF6B9D;
+}
+
+/* Mensajes */
+.msg-error {
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  color: #c53030;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.msg-exito {
+  background: #f0fff4;
+  border: 1px solid #9ae6b4;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  color: #276749;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+/* Historial */
+.movimientos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.movimiento-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border-left: 4px solid #e0e0e0;
+  background: #fafafa;
+  gap: 1rem;
+}
+
+.movimiento-item.ganado { border-left-color: #48bb78; background: #f0fff4; }
+.movimiento-item.usado { border-left-color: #ed8936; background: #fffaf0; }
+.movimiento-item.ajuste { border-left-color: #667eea; background: #f5f5ff; }
+
+.mov-info { display: flex; flex-direction: column; gap: 0.2rem; flex: 1; }
+.mov-tipo { font-size: 0.85rem; font-weight: 600; color: #333; }
+.mov-desc { font-size: 0.8rem; color: #777; }
+.mov-fecha { font-size: 0.75rem; color: #aaa; }
+.mov-monto { font-size: 1rem; font-weight: 700; white-space: nowrap; }
+.mov-monto.positivo { color: #38a169; }
+.mov-monto.negativo { color: #e53e3e; }
+
+/* Registro manual */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .detalle-grid { grid-template-columns: 1fr; }
+  .ajuste-inputs { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .admin-clients { padding: 1rem; }
+}

@@ -1,0 +1,75 @@
+<div class="catalog-page">
+  <section class="hero-section">
+    <h1>Nuestro Catálogo</h1>
+    <p class="subtitle">Descubre todos nuestros deliciosos productos</p>
+  </section>
+
+  <section class="products-section">
+    <div class="container">
+      @if (isLoading()) {
+        <div class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>Cargando productos...</p>
+        </div>
+      } @else if (error()) {
+        <div class="error-container">
+          <p class="error-message">{{ error() }}</p>
+          <button class="retry-btn" (click)="loadProducts()">Reintentar</button>
+        </div>
+      } @else if (products().length === 0) {
+        <div class="no-products">
+          <p>No hay productos disponibles en este momento.</p>
+        </div>
+      } @else {
+        <div class="products-grid">
+          @for (product of products(); track product.id) {
+            <div class="product-card">
+              <div class="product-image">
+                <img [src]="product.image" [alt]="product.name">
+                <a [routerLink]="['/producto', product.id]" class="view-details-link">Ver Detalles</a>
+              </div>
+              <div class="product-info">
+                <h3>{{ product.name }}</h3>
+                <p class="description">{{ product.description }}</p>
+
+                @if (product.averageRating && product.averageRating > 0) {
+                  <div class="product-rating">
+                    <div class="stars">
+                      @for (star of [1,2,3,4,5]; track star) {
+                        <span [class.filled]="star <= roundRating(product.averageRating!)" class="star">★</span>
+                      }
+                    </div>
+                    <span class="rating-text">
+                      {{ product.averageRating.toFixed(1) }}
+                      @if (product.reviewCount) { ({{ product.reviewCount }}) }
+                    </span>
+                  </div>
+                }
+
+                <div class="product-footer">
+                  <div class="precios-container">
+                    @if (product.priceMayoreo && product.priceMenudeo && product.priceMayoreo !== product.priceMenudeo) {
+                      <div class="precio-mayoreo">
+                        <span class="precio-label">Mayoreo (5kg+)</span>
+                        <span class="precio-valor">{{ formatPrice(product.priceMayoreo) }}/kg</span>
+                      </div>
+                      <div class="precio-menudeo">
+                        <span class="precio-label">Menudeo</span>
+                        <span class="precio-valor">{{ formatPrice(product.priceMenudeo) }}/kg</span>
+                      </div>
+                    } @else {
+                      <span class="price">{{ formatPrice(product.price) }}/kg</span>
+                    }
+                  </div>
+                  <button class="order-btn" (click)="orderOnWhatsApp(product.name)">
+                    Ordenar
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</div>

@@ -1,0 +1,96 @@
+<div class="admin-product-form">
+  <div class="form-container">
+    <div class="form-header">
+      <a routerLink="/admin" [queryParams]="{ tab: 'products' }" class="back-btn">← Volver</a>
+      <h1>{{ productId && productId !== 'new' ? 'Editar Producto' : 'Nuevo Producto' }}</h1>
+    </div>
+
+    <div class="form-content">
+      @if (error()) {
+        <div class="error-message">⚠️ {{ error() }}</div>
+      }
+
+      <!-- Imagen -->
+      <div class="form-group">
+        <label>Imagen del Producto *</label>
+        <div class="imagen-grid">
+          @for (img of imagenesDisponibles; track img.value) {
+            <div class="imagen-opcion" [class.selected]="product.image === img.value"
+              (click)="product.image = img.value">
+              <img [src]="img.value" [alt]="img.label" />
+              <span>{{ img.label }}</span>
+            </div>
+          }
+        </div>
+        @if (product.image) {
+          <p class="imagen-selected">✅ {{ product.image }}</p>
+        }
+      </div>
+
+      <!-- Nombre y categoría -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre *</label>
+          <input type="text" [(ngModel)]="product.name" name="name" placeholder="Ej: Corazón Frutal" />
+        </div>
+        <div class="form-group">
+          <label>Categoría</label>
+          <input type="text" [(ngModel)]="product.category" name="category" placeholder="Ej: Gomitas" />
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="form-group">
+        <label>Descripción *</label>
+        <textarea [(ngModel)]="product.description" name="description" rows="3"
+          placeholder="Describe el producto de manera atractiva..."></textarea>
+      </div>
+
+      <!-- Precios -->
+      <div class="precios-section">
+        <h3>💰 Precios</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Precio Mayoreo (5kg o más) *</label>
+            <div class="precio-input">
+              <span>$</span>
+              <input type="number" [(ngModel)]="product.priceMayoreo" name="priceMayoreo" min="0" step="1" placeholder="100" />
+              <small>/kg</small>
+            </div>
+            <p class="precio-hint">Para pedidos de 5kg o más</p>
+          </div>
+          <div class="form-group">
+            <label>Precio Menudeo (menos de 5kg)</label>
+            <div class="precio-input">
+              <span>$</span>
+              <input type="number" [(ngModel)]="product.priceMenudeo" name="priceMenudeo" min="0" step="1" placeholder="120" />
+              <small>/kg</small>
+            </div>
+            <p class="precio-hint">Para pedidos menores a 5kg</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checkboxes -->
+      <div class="checkboxes">
+        <label class="checkbox-item">
+          <input type="checkbox" [(ngModel)]="product.available" name="available" />
+          <span>✅ Disponible para venta</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" [(ngModel)]="product.featured" name="featured" />
+          <span>⭐ Mostrar en destacados del inicio</span>
+        </label>
+      </div>
+
+      <!-- Acciones -->
+      <div class="form-actions">
+        <a routerLink="/admin" [queryParams]="{ tab: 'products' }" class="cancel-btn">Cancelar</a>
+        <button (click)="onSubmit()" [disabled]="isLoading()" class="submit-btn">
+          @if (isLoading()) { ⏳ Guardando... }
+          @else { ✅ {{ productId && productId !== 'new' ? 'Actualizar' : 'Crear' }} Producto }
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

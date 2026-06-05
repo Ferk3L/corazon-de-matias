@@ -1,0 +1,150 @@
+.product-detail-page {
+  min-height: 100vh;
+  padding-bottom: 4rem;
+}
+
+.loading-container,
+.error-container {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #333333;
+}
+
+.error-container {
+  color: #F67280;
+}
+
+.back-link {
+  display: inline-block;
+  color: #FF6B9D;
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  transition: color 0.3s ease;
+}
+
+.back-link:hover {
+  color: #F67280;
+}
+
+.product-detail {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.product-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 4rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.product-image-section {
+  width: 100%;
+}
+
+.product-image-section img {
+  width: 100%;
+  height: auto;
+  border-radius: 15px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.product-info-section h1 {
+  font-size: 3rem;
+  color: #FF6B9D;
+  margin-bottom: 1rem;
+}
+
+.product-rating {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.product-rating .stars {
+  display: flex;
+  gap: 0.3rem;
+  font-size: 1.5rem;
+}
+
+.product-rating .star {
+  color: #ddd;
+}
+
+.product-rating .star.filled {
+  color: #fbbf24;
+}
+
+.rating-text {
+  color: #333333;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.product-description {
+  font-size: 1.2rem;
+  color: #333333;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+
+.product-price {
+  margin-bottom: 2rem;
+}
+
+.product-price .price {
+  font-size: 2.5rem;
+  color: #FF6B9D;
+  font-weight: 700;
+}
+
+.order-btn {
+  background: linear-gradient(135deg, #25D366 0%, #20BA5A 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 30px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+}
+
+.order-btn:hover {
+  background: #20BA5A;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+}
+
+.reviews-section {
+  margin-top: 3rem;
+}
+
+@media (max-width: 968px) {
+  .product-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .product-info-section h1 {
+    font-size: 2rem;
+  }
+
+  .product-price .price {
+    font-size: 2rem;
+  }
+}
+

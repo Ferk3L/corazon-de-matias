@@ -1,0 +1,72 @@
+<div class="review-form">
+  <h3>Deja tu Reseña</h3>
+  
+  <div class="success-message" *ngIf="showSuccess">
+    <span>✓</span> ¡Gracias! Tu reseña ha sido enviada exitosamente.
+  </div>
+
+  <form (ngSubmit)="submitReview()">
+    <div class="form-group">
+      <label>Calificación *</label>
+      <div class="stars-rating">
+        <button
+          type="button"
+          *ngFor="let star of [1, 2, 3, 4, 5]"
+          class="star-btn"
+          [class.active]="star <= review.rating"
+          [class.hovered]="star <= hoveredStar"
+          (click)="setRating(star)"
+          (mouseenter)="hoveredStar = star"
+          (mouseleave)="hoveredStar = 0"
+        >
+          ★
+        </button>
+        <span class="rating-text" *ngIf="review.rating > 0">
+          {{ review.rating }} de 5 estrellas
+        </span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="comment">Comentario *</label>
+      <textarea
+        id="comment"
+        [(ngModel)]="review.comment"
+        name="comment"
+        rows="4"
+        placeholder="Comparte tu experiencia con este producto..."
+        required
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>
+        <input
+          type="checkbox"
+          [(ngModel)]="review.isAnonymous"
+          name="isAnonymous"
+          (change)="toggleAnonymous()"
+        />
+        Publicar como anónimo
+      </label>
+    </div>
+
+    <div class="form-group" *ngIf="!review.isAnonymous">
+      <label for="authorName">Tu Nombre *</label>
+      <input
+        type="text"
+        id="authorName"
+        [(ngModel)]="review.authorName"
+        name="authorName"
+        placeholder="Ingresa tu nombre"
+        required
+      />
+    </div>
+
+    <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+      <span *ngIf="!isSubmitting">Enviar Reseña</span>
+      <span *ngIf="isSubmitting">Enviando...</span>
+    </button>
+  </form>
+</div>
+

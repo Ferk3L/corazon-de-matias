@@ -1,0 +1,99 @@
+<div class="dashboard-page">
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="loading-screen">
+      <div class="spinner"></div>
+      <p>Cargando tu cuenta...</p>
+    </div>
+  }
+
+  <!-- Contenido -->
+  @if (!isLoading() && cliente()) {
+    <div class="dashboard-container">
+
+      <!-- Header -->
+      <div class="dashboard-header">
+        <div class="header-info">
+          <div class="avatar">{{ cliente()!.nombre[0].toUpperCase() }}</div>
+          <div>
+            <h1>¡Hola, {{ cliente()!.nombre.split(' ')[0] }}! 👋</h1>
+            <p>{{ cliente()!.email }}</p>
+          </div>
+        </div>
+        <button class="btn-logout" (click)="cerrarSesion()" [disabled]="isLoggingOut()">
+          {{ isLoggingOut() ? 'Saliendo...' : 'Cerrar sesión' }}
+        </button>
+      </div>
+
+      <!-- Tarjeta saldo cashback -->
+      <div class="cashback-card">
+        <div class="cashback-label">💰 Tu saldo de cashback</div>
+        <div class="cashback-amount">${{ cliente()!.saldoCashback.toFixed(2) }}</div>
+        <div class="cashback-hint">
+          Disponible para usar en tu próxima compra
+        </div>
+        <div class="cashback-divider"></div>
+        <div class="cashback-stats">
+          <div class="stat">
+            <span class="stat-label">Total en compras</span>
+            <span class="stat-value">${{ cliente()!.totalCompras.toFixed(2) }}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Miembro desde</span>
+            <span class="stat-value">{{ formatFecha(cliente()!.fechaRegistro) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info cashback -->
+      <div class="info-card">
+        <h3>¿Cómo funciona el cashback?</h3>
+        <div class="info-items">
+          <div class="info-item">
+            <span class="info-icon">📦</span>
+            <p>Compra <strong>1kg o más</strong> y gana automáticamente el <strong>5%</strong> de tu compra en cashback</p>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">💳</span>
+            <p>Al hacer tu pedido, indica que quieres usar tu saldo y se descuenta automáticamente</p>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">📱</span>
+            <p>¿Conoces a alguien nuevo? Dile que escanee nuestro QR y recibe <strong>$20 de bienvenida</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historial -->
+      <div class="historial-section">
+        <h2>Historial de movimientos</h2>
+
+        @if (historial().length === 0) {
+          <div class="empty-historial">
+            <span>🛍️</span>
+            <p>Aún no tienes movimientos.<br>¡Haz tu primera compra de 5kg o más y gana cashback!</p>
+            <a routerLink="/catalogo" class="btn-catalogo">Ver catálogo</a>
+          </div>
+        } @else {
+          <div class="movimientos-list">
+            @for (mov of historial(); track mov.id) {
+              <div class="movimiento-item" [class]="getTipoClass(mov.tipo)">
+                <div class="mov-info">
+                  <span class="mov-tipo">{{ getTipoLabel(mov.tipo) }}</span>
+                  <span class="mov-desc">{{ mov.descripcion }}</span>
+                  <span class="mov-fecha">{{ formatFecha(mov.fecha) }}</span>
+                </div>
+                <div class="mov-monto" [class]="mov.monto > 0 ? 'positivo' : 'negativo'">
+                  {{ mov.monto > 0 ? '+' : '' }}${{ mov.monto.toFixed(2) }}
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+  }
+
+</div>

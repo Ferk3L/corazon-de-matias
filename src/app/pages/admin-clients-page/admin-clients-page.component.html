@@ -1,0 +1,204 @@
+<div class="admin-clients">
+
+  <!-- ===== VISTA: LISTA ===== -->
+  @if (vistaActual === 'lista') {
+    <div class="section-header">
+      <div>
+        <h2>👥 Clientes Frecuentes</h2>
+        <p>Gestiona los clientes y su saldo de cashback</p>
+      </div>
+      <button class="btn-primary" (click)="vistaActual = 'registro-manual'">
+        + Registrar cliente
+      </button>
+    </div>
+
+    <!-- Buscador -->
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        [(ngModel)]="busqueda"
+        (input)="filtrarClientes()"
+        placeholder="Buscar por nombre, correo o teléfono..."
+      />
+    </div>
+
+    <!-- Loading -->
+    @if (isLoading) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Cargando clientes...</p>
+      </div>
+    }
+
+    <!-- Lista clientes -->
+    @if (!isLoading) {
+      @if (clientesFiltrados.length === 0) {
+        <div class="empty-state">
+          <span>👥</span>
+          <p>No se encontraron clientes</p>
+        </div>
+      } @else {
+        <div class="clientes-grid">
+          @for (cliente of clientesFiltrados; track cliente.uid) {
+            <div class="cliente-card" (click)="verDetalle(cliente)">
+              <div class="cliente-avatar">{{ cliente.nombre[0].toUpperCase() }}</div>
+              <div class="cliente-info">
+                <h3>{{ cliente.nombre }}</h3>
+                <p class="cliente-email">{{ cliente.email }}</p>
+                @if (cliente.telefono) {
+                  <p class="cliente-tel">📞 {{ cliente.telefono }}</p>
+                }
+                <p class="cliente-fecha">Desde {{ formatFecha(cliente.fechaRegistro) }}</p>
+              </div>
+              <div class="cliente-cashback">
+                <span class="cashback-label">Cashback</span>
+                <span class="cashback-monto">${{ cliente.saldoCashback.toFixed(2) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  }
+
+  <!-- ===== VISTA: DETALLE CLIENTE ===== -->
+  @if (vistaActual === 'detalle' && clienteSeleccionado) {
+    <div class="detalle-header">
+      <button class="btn-back" (click)="volverALista()">← Volver</button>
+      <h2>{{ clienteSeleccionado.nombre }}</h2>
+    </div>
+
+    <!-- Info cliente -->
+    <div class="detalle-grid">
+      <div class="detalle-info-card">
+        <h3>Información del cliente</h3>
+        <div class="info-row"><span>📧 Correo</span><strong>{{ clienteSeleccionado.email }}</strong></div>
+        <div class="info-row"><span>📞 Teléfono</span><strong>{{ clienteSeleccionado.telefono || 'No registrado' }}</strong></div>
+        <div class="info-row"><span>📅 Registro</span><strong>{{ formatFecha(clienteSeleccionado.fechaRegistro) }}</strong></div>
+        <div class="info-row"><span>🛒 Total compras</span><strong>${{ clienteSeleccionado.totalCompras.toFixed(2) }}</strong></div>
+        <div class="info-row"><span>🎁 Bono QR</span><strong>{{ clienteSeleccionado.bonoBienvenidaUsado ? '✅ Aplicado' : '❌ No usado' }}</strong></div>
+      </div>
+
+      <!-- Saldo cashback -->
+      <div class="saldo-card">
+        <p class="saldo-label">💰 Saldo cashback</p>
+        <p class="saldo-monto">${{ clienteSeleccionado.saldoCashback.toFixed(2) }}</p>
+      </div>
+    </div>
+
+    <!-- Ajuste manual -->
+    <div class="ajuste-card">
+      <h3>🔧 Ajuste manual de cashback</h3>
+      <p class="ajuste-hint">Usa esto si un pedido no registró el cashback automáticamente</p>
+
+      <div class="ajuste-form">
+        <div class="tipo-selector">
+          <button
+            [class.active]="ajuste.tipo === 'sumar'"
+            (click)="ajuste.tipo = 'sumar'"
+            class="tipo-btn sumar">
+            ➕ Sumar
+          </button>
+          <button
+            [class.active]="ajuste.tipo === 'restar'"
+            (click)="ajuste.tipo = 'restar'"
+            class="tipo-btn restar">
+            ➖ Restar
+          </button>
+        </div>
+
+        <div class="ajuste-inputs">
+          <div class="form-group">
+            <label>Monto ($)</label>
+            <input type="number" [(ngModel)]="ajuste.monto" placeholder="0.00" min="0" />
+          </div>
+          <div class="form-group">
+            <label>Motivo del ajuste</label>
+            <input type="text" [(ngModel)]="ajuste.nota" placeholder="Ej: Pedido #123 no registró cashback" />
+          </div>
+        </div>
+
+        @if (mensajeError) {
+          <div class="msg-error">⚠️ {{ mensajeError }}</div>
+        }
+        @if (mensajeExito) {
+          <div class="msg-exito">✅ {{ mensajeExito }}</div>
+        }
+
+        <button class="btn-primary" (click)="aplicarAjuste()" [disabled]="isSaving">
+          {{ isSaving ? 'Aplicando...' : 'Aplicar ajuste' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Historial -->
+    <div class="historial-card">
+      <h3>📋 Historial de movimientos</h3>
+
+      @if (isLoadingHistorial) {
+        <div class="loading-state"><div class="spinner"></div></div>
+      } @else if (historialCliente.length === 0) {
+        <div class="empty-state"><span>📋</span><p>Sin movimientos aún</p></div>
+      } @else {
+        <div class="movimientos-list">
+          @for (mov of historialCliente; track mov.id) {
+            <div class="movimiento-item" [class]="getTipoClass(mov.tipo)">
+              <div class="mov-info">
+                <span class="mov-tipo">{{ getTipoLabel(mov.tipo) }}</span>
+                <span class="mov-desc">{{ mov.descripcion }}</span>
+                <span class="mov-fecha">{{ formatFecha(mov.fecha) }}</span>
+              </div>
+              <div class="mov-monto" [class]="mov.monto > 0 ? 'positivo' : 'negativo'">
+                {{ mov.monto > 0 ? '+' : '' }}${{ mov.monto.toFixed(2) }}
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ===== VISTA: REGISTRO MANUAL ===== -->
+  @if (vistaActual === 'registro-manual') {
+    <div class="detalle-header">
+      <button class="btn-back" (click)="volverALista()">← Volver</button>
+      <h2>Registrar cliente manualmente</h2>
+    </div>
+
+    <div class="registro-card">
+      <p class="ajuste-hint">Usa esto cuando el sistema falle o el cliente no pueda registrarse solo</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre completo *</label>
+          <input type="text" [(ngModel)]="nuevoCliente.nombre" placeholder="Nombre del cliente" />
+        </div>
+        <div class="form-group">
+          <label>Correo electrónico *</label>
+          <input type="email" [(ngModel)]="nuevoCliente.email" placeholder="correo@ejemplo.com" />
+        </div>
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="tel" [(ngModel)]="nuevoCliente.telefono" placeholder="618 000 0000" />
+        </div>
+        <div class="form-group">
+          <label>Saldo cashback inicial ($)</label>
+          <input type="number" [(ngModel)]="nuevoCliente.saldoInicial" placeholder="0.00" min="0" />
+        </div>
+      </div>
+
+      @if (mensajeError) {
+        <div class="msg-error">⚠️ {{ mensajeError }}</div>
+      }
+      @if (mensajeExito) {
+        <div class="msg-exito">✅ {{ mensajeExito }}</div>
+      }
+
+      <button class="btn-primary" (click)="registrarClienteManual()" [disabled]="isSaving">
+        {{ isSaving ? 'Registrando...' : 'Registrar cliente' }}
+      </button>
+    </div>
+  }
+
+</div>

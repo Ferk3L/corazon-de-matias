@@ -1,0 +1,67 @@
+<div class="blog-page">
+  <section class="hero-section">
+    <h1>Blog</h1>
+    <p class="subtitle">Recetas, tips y todo sobre el mundo de las gomitas</p>
+  </section>
+
+  <section class="articles-section">
+    <div class="container">
+      @if (isLoading) {
+        <div class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>Cargando artículos...</p>
+        </div>
+      } @else if (error && articles.length === 0) {
+        <div class="error-container">
+          <p class="error-message">{{ error }}</p>
+          <button class="retry-btn" (click)="loadArticles()">Reintentar</button>
+        </div>
+      } @else {
+        <div class="articles-grid">
+          @for (article of articles; track article.id) {
+            <article class="article-card">
+              <div class="article-image">
+                <img [src]="article.image" [alt]="article.title">
+                <span class="category-badge">{{ article.category }}</span>
+              </div>
+              <div class="article-content">
+                <div class="article-meta">
+                  <span class="date">📅 {{ article.date }}</span>
+                </div>
+                <h2>{{ article.title }}</h2>
+                <p>{{ article.excerpt }}</p>
+                <button class="read-more-btn" (click)="openArticle(article)">Leer más →</button>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</div>
+
+<!-- Modal para ver artículo completo -->
+@if (selectedArticle) {
+  <div class="article-modal-overlay" (click)="closeArticle()">
+    <div class="article-modal" (click)="$event.stopPropagation()">
+      <button class="close-modal-btn" (click)="closeArticle()">✕</button>
+      <div class="modal-image">
+        <img [src]="selectedArticle.image" [alt]="selectedArticle.title">
+        <span class="category-badge">{{ selectedArticle.category }}</span>
+      </div>
+      <div class="modal-content">
+        <div class="article-meta">
+          <span class="date">📅 {{ selectedArticle.date }}</span>
+        </div>
+        <h1>{{ selectedArticle.title }}</h1>
+        <div class="article-body">
+          @if (selectedArticle.content) {
+            <p [innerHTML]="selectedArticle.content.replace('\n', '<br>')"></p>
+          } @else {
+            <p>{{ selectedArticle.excerpt }}</p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}
