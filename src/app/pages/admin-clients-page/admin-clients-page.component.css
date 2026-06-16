@@ -407,3 +407,81 @@
   .form-grid { grid-template-columns: 1fr; }
   .admin-clients { padding: 1rem; }
 }
+/* ===== NUEVOS ESTILOS ===== */
+.header-actions { display: flex; gap: 0.6rem; align-items: center; }
+
+.btn-refresh {
+  background: white;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-refresh:hover { background: #f5f5f5; transform: rotate(180deg); }
+
+/* Cliente bloqueado */
+.cliente-card.bloqueado { opacity: 0.7; border: 1.5px solid #fed7d7; background: #fff5f5; }
+.bloqueado-avatar { background: #fc8181 !important; }
+.bloqueado-monto { color: #e53e3e !important; }
+.cliente-nombre-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.badge-bloqueado { background: #FED7D7; color: #c53030; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 50px; }
+.texto-rojo { color: #e53e3e !important; }
+.texto-verde { color: #38a169 !important; }
+
+/* Acciones card */
+.acciones-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.3rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  margin-bottom: 1rem;
+}
+.acciones-card h3 { font-size: 1rem; color: #333; margin: 0 0 1rem; }
+.acciones-grid { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1rem; }
+
+.btn-accion {
+  padding: 0.7rem 1.2rem;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-accion.bloquear { background: #FFFFF0; color: #744210; border: 1px solid #FEFCBF; }
+.btn-accion.bloquear:hover { background: #FEFCBF; }
+.btn-accion.desbloquear { background: #F0FFF4; color: #276749; border: 1px solid #C6F6D5; }
+.btn-accion.desbloquear:hover { background: #C6F6D5; }
+.btn-accion.eliminar { background: #FFF5F5; color: #c53030; border: 1px solid #FED7D7; }
+.btn-accion.eliminar:hover { background: #FED7D7; }
+
+/* Confirmaciones */
+.confirm-box {
+  width: 100%;
+  background: #FFFFF0;
+  border: 1.5px solid #FEFCBF;
+  border-radius: 12px;
+  padding: 1rem;
+}
+.confirm-box.eliminar { background: #FFF5F5; border-color: #FED7D7; }
+.confirm-box.desbloquear { background: #F0FFF4; border-color: #C6F6D5; }
+.confirm-box p { font-size: 0.88rem; color: #555; margin: 0 0 0.8rem; }
+.confirm-btns { display: flex; gap: 0.6rem; }
+
+.btn-confirm-si {
+  background: #fbbf24; color: white; border: none;
+  padding: 0.5rem 1rem; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+}
+.btn-confirm-eliminar {
+  background: #e53e3e; color: white; border: none;
+  padding: 0.5rem 1rem; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+}
+.btn-confirm-no {
+  background: #e2e8f0; color: #555; border: none;
+  padding: 0.5rem 1rem; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+}

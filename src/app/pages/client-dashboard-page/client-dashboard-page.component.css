@@ -320,3 +320,86 @@
     align-items: flex-start;
   }
 }
+/* ===== QR CASHBACK ===== */
+.btn-qr {
+  background: #F0FFF4;
+  color: #276749;
+  border: 1px solid #9ae6b4;
+  padding: 0.35rem 0.7rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-qr:hover:not(:disabled) {
+  background: #C6F6D5;
+}
+
+.btn-qr:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.qr-modal {
+  max-width: 420px;
+}
+
+.qr-modal-body {
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.qr-instruccion {
+  color: #555;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.qr-monto-badge {
+  background: #F0FFF4;
+  border: 1.5px solid #9ae6b4;
+  border-radius: 10px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  color: #276749;
+}
+
+.qr-monto-badge strong {
+  font-size: 1.1rem;
+}
+
+.qr-code-container {
+  background: white;
+  border: 3px solid #FF6B9D;
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.qr-image {
+  width: 220px;
+  height: 220px;
+  display: block;
+}
+
+.qr-nota {
+  font-size: 0.8rem;
+  color: #e53e3e;
+  margin: 0;
+}
+
+.qr-url {
+  font-size: 0.7rem;
+  color: #aaa;
+  word-break: break-all;
+  background: #f5f5f5;
+  padding: 0.5rem;
+  border-radius: 6px;
+  width: 100%;
+}

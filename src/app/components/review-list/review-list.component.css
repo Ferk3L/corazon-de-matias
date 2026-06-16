@@ -142,3 +142,91 @@
   }
 }
 
+
+/* ===== LIKES Y MEJORAS ===== */
+.review-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 1.2rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+  margin-bottom: 1.2rem;
+}
+
+.rating-big { font-size: 3rem; font-weight: 800; color: #FFD700; line-height: 1; }
+.stars-row { display: flex; gap: 0.2rem; }
+.total-count { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+
+.review-item {
+  background: rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.review-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.7rem; }
+.review-author-info { display: flex; align-items: center; gap: 0.7rem; }
+
+.author-avatar {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, #FF6B9D, #f97316);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 700; font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.author-name { color: white; font-size: 0.9rem; display: block; }
+.review-date { font-size: 0.75rem; color: rgba(255,255,255,0.5); }
+.star-sm { font-size: 0.9rem; color: rgba(255,255,255,0.2); }
+.star-sm.filled { color: #FFD700; }
+.review-comment { color: rgba(255,255,255,0.85); font-size: 0.88rem; line-height: 1.5; margin: 0 0 0.7rem; }
+
+/* Footer */
+.review-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
+
+.admin-like-badge {
+  display: flex; align-items: center; gap: 0.3rem;
+  background: rgba(255,215,0,0.15);
+  border: 1px solid rgba(255,215,0,0.3);
+  color: #FFD700;
+  padding: 0.25rem 0.7rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.like-btn {
+  display: flex; align-items: center; gap: 0.35rem;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  transition: all 0.2s;
+  margin-left: auto;
+}
+
+.like-btn:hover:not(:disabled) { background: rgba(255,107,157,0.2); border-color: rgba(255,107,157,0.4); }
+.like-btn.liked { background: rgba(255,107,157,0.2); border-color: #FF6B9D; }
+.like-btn:disabled { cursor: default; opacity: 0.6; }
+.heart { font-size: 1rem; }
+.like-count { font-weight: 600; }
+
+.no-reviews { text-align: center; padding: 2rem; color: rgba(255,255,255,0.5); }
+.no-reviews span { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+.error-state { text-align: center; color: rgba(255,255,255,0.4); padding: 1rem; font-size: 0.85rem; }
+
+.loading { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1.5rem; }
+.spinner {
+  width: 30px; height: 30px;
+  border: 3px solid rgba(255,255,255,0.2);
+  border-top-color: #FF6B9D;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

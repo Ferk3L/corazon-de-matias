@@ -21,11 +21,16 @@
       <a routerLink="/pedidos" routerLinkActive="active">Pedidos</a>
       <a routerLink="/blog" routerLinkActive="active">Blog</a>
       <a routerLink="/contacto" routerLinkActive="active">Contacto</a>
+      <a routerLink="/buzon" routerLinkActive="active">📬 Buzón</a>
 
       <!-- Separador -->
       <div class="nav-divider"></div>
 
       <!-- Sesión del cliente -->
+      <a routerLink="/pedidos" class="nav-carrito" [class.visible]="cartService.count() > 0">
+        🛒 <span class="carrito-count" *ngIf="cartService.count() > 0">{{ cartService.totalKg() }}kg</span>
+      </a>
+
       @if (!usuarioLogueado()) {
         <a routerLink="/clientes/login" class="nav-btn-login">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -72,6 +77,7 @@
       <a routerLink="/pedidos">Hacer pedido</a>
       <a routerLink="/sobre-nosotros">Sobre nosotros</a>
       <a routerLink="/blog">Blog</a>
+      <a routerLink="/buzon">📬 Buzón de sugerencias</a>
     </div>
     <div class="footer-section">
       <h4>Mi cuenta</h4>

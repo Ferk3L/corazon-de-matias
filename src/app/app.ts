@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet, Router, NavigationEnd } fro
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { ClientAuthService } from './core/client-auth.service';
+import { CartService } from './core/cart.service';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { app } from './app.config';
 
@@ -22,7 +23,8 @@ export class App implements OnInit {
 
   constructor(
     private router: Router,
-    private clientAuthService: ClientAuthService
+    private clientAuthService: ClientAuthService,
+    public cartService: CartService
   ) {
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd)
@@ -35,7 +37,7 @@ export class App implements OnInit {
   ngOnInit() {
     const auth = getAuth(app);
     onAuthStateChanged(auth, (user) => {
-      // No mostrar en navbar si es el admin
+      // No mostrar en navbar si es el admin o si no tiene sesión
       if (user && user.email?.toLowerCase() !== ADMIN_EMAIL) {
         this.usuarioLogueado.set(true);
         this.nombreUsuario.set(
@@ -44,6 +46,7 @@ export class App implements OnInit {
           'Mi cuenta'
         );
       } else {
+        // Si es admin o no hay sesión, limpiar el navbar
         this.usuarioLogueado.set(false);
         this.nombreUsuario.set('');
       }
@@ -58,4 +61,5 @@ export class App implements OnInit {
   toggleMenu() {
     this.menuAbierto.set(!this.menuAbierto());
   }
+  
 }

@@ -7,7 +7,7 @@
       <p class="subtitle">Accede a tu cuenta y revisa tu saldo de cashback</p>
     </div>
 
-    <!-- PASO 1: Solo pedir email -->
+    <!-- PASO 1: Pedir email -->
     @if (paso() === 'email') {
       <div class="form-group">
         <label for="email">Correo electrónico</label>
@@ -32,7 +32,6 @@
 
       <div class="divider">o</div>
 
-      <!-- Botón Google siempre disponible -->
       <button class="btn-google" (click)="loginGoogle()" [disabled]="isLoading()">
         <svg width="20" height="20" viewBox="0 0 48 48">
           <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -48,7 +47,7 @@
       </div>
     }
 
-    <!-- PASO 2a: Tiene cuenta con contraseña -->
+    <!-- PASO 2: Pedir contraseña -->
     @if (paso() === 'password') {
       <div class="email-badge" (click)="resetPaso()">
         <span>✉️ {{ form.email }}</span>
@@ -72,6 +71,23 @@
         <div class="error-alert">⚠️ {{ error() }}</div>
       }
 
+      <!-- Email no verificado -->
+      @if (emailNoVerificado()) {
+        <div class="verificacion-box">
+          <div class="verificacion-icon">📧</div>
+          <h3>Verifica tu correo primero</h3>
+          <p>Enviamos un email de verificación a <strong>{{ form.email }}</strong>. Revisa tu bandeja de entrada y haz clic en el link.</p>
+          @if (reenvioExitoso()) {
+            <div class="reenvio-exito">✅ Email reenviado correctamente</div>
+          } @else {
+            <button type="button" class="btn-reenviar" (click)="reenviarVerificacion()">
+              🔄 Reenviar email de verificación
+            </button>
+          }
+          <p class="verificacion-hint">¿No lo encuentras? Revisa tu carpeta de spam</p>
+        </div>
+      }
+
       <button class="btn-login" (click)="login()" [disabled]="isLoading()">
         @if (isLoading()) {
           <span class="btn-spinner"></span> Ingresando...
@@ -80,40 +96,16 @@
         }
       </button>
 
-      <div class="card-footer">
-        <p>¿No recuerdas tu contraseña? <a routerLink="/clientes/registro">Crea una cuenta nueva</a></p>
-      </div>
-    }
-
-    <!-- PASO 2b: Tiene cuenta con Google -->
-    @if (paso() === 'google') {
-      <div class="email-badge" (click)="resetPaso()">
-        <span>✉️ {{ form.email }}</span>
-        <span class="change-email">Cambiar →</span>
-      </div>
-
-      <div class="google-hint">
-        <span>🔑</span>
-        <p>Esta cuenta usa <strong>Google</strong> para iniciar sesión. No necesitas contraseña.</p>
-      </div>
-
-      @if (error()) {
-        <div class="error-alert">⚠️ {{ error() }}</div>
-      }
-
+      <!-- También con Google si quiere -->
+      <div class="divider">o</div>
       <button class="btn-google" (click)="loginGoogle()" [disabled]="isLoading()">
-        @if (isLoading()) {
-          <span class="btn-spinner" style="border-color:rgba(0,0,0,0.15);border-top-color:#4285F4;"></span>
-          Abriendo Google...
-        } @else {
-          <svg width="20" height="20" viewBox="0 0 48 48">
-            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-          </svg>
-          Continuar con Google
-        }
+        <svg width="20" height="20" viewBox="0 0 48 48">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        Continuar con Google
       </button>
 
       <div class="card-footer">
@@ -123,7 +115,7 @@
 
     <div class="cashback-info">
       <span>💰</span>
-      <p>Compra <strong>5kg o más</strong> y gana <strong>5% cashback</strong> automáticamente</p>
+      <p>Compra <strong>1kg o más</strong> y gana <strong>5% cashback</strong> automáticamente</p>
     </div>
 
   </div>

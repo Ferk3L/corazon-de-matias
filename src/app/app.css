@@ -132,3 +132,14 @@
   .header-content { position: relative; }
   .footer-content { grid-template-columns: 1fr; gap: 1.5rem; }
 }
+/* Carrito en navbar */
+.nav-carrito {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,107,157,0.15); color: white;
+  padding: 7px 14px; border-radius: 20px; font-size: 0.85rem;
+  font-weight: 700; text-decoration: none; transition: all 0.2s;
+  border: 1px solid rgba(255,107,157,0.3);
+}
+.nav-carrito:hover { background: rgba(255,107,157,0.25); }
+.nav-carrito.visible { display: flex; }
+.carrito-count { color: #fbbf24; }

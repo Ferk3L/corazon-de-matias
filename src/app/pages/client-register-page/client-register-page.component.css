@@ -83,3 +83,146 @@
 }
 .success-card p { color: rgba(255,255,255,0.65); font-size: 0.9rem; margin-bottom: 8px; }
 .success-card strong { color: #4ade80; font-size: 1rem; display: block; }
+/* ===== PANTALLA VERIFICACIÓN EXITOSA ===== */
+.verificacion-exitosa {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.verificacion-card {
+  background: white;
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+.verificacion-emoji { font-size: 4rem; margin-bottom: 0.5rem; }
+.verificacion-card h2 { color: #38a169; font-size: 1.5rem; margin: 0 0 0.3rem; }
+.verificacion-card h3 { color: #333; font-size: 1.1rem; margin: 0 0 1rem; }
+.verificacion-card > p { color: #666; font-size: 0.9rem; margin: 0 0 0.5rem; }
+
+.email-badge {
+  background: #EFF6FF;
+  color: #1D4ED8;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  word-break: break-all;
+}
+
+.verificacion-pasos {
+  text-align: left;
+  background: #F9FAFB;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  color: #555;
+  font-size: 0.88rem;
+  line-height: 2;
+  margin-bottom: 0.8rem !important;
+}
+
+.spam-hint { color: #aaa; font-size: 0.8rem; margin-bottom: 1rem !important; }
+
+.btn-ir-login {
+  display: inline-block;
+  background: linear-gradient(135deg, #FF6B9D, #f97316);
+  color: white;
+  padding: 0.9rem 2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.btn-ir-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255,107,157,0.4);
+}
+/* ===== CÓDIGO DE VERIFICACIÓN ===== */
+.codigo-input-group {
+  margin: 1.2rem 0;
+}
+
+.codigo-input {
+  width: 100%;
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: 1rem;
+  text-align: center;
+  padding: 1rem;
+  border: 3px solid #e0e0e0;
+  border-radius: 16px;
+  font-family: monospace;
+  transition: border 0.2s;
+  box-sizing: border-box;
+}
+
+.codigo-input:focus {
+  outline: none;
+  border-color: #FF6B9D;
+}
+
+.error-codigo {
+  background: #FFF5F5;
+  color: #c53030;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 0.8rem;
+}
+
+.btn-verificar {
+  width: 100%;
+  background: linear-gradient(135deg, #FF6B9D, #f97316);
+  color: white;
+  border: none;
+  padding: 0.9rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 1rem;
+}
+
+.btn-verificar:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255,107,157,0.4);
+}
+
+.btn-verificar:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.reenviar-section { margin-bottom: 0.8rem; }
+
+.btn-reenviar-codigo {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 0.88rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.reenvio-ok { color: #38a169; font-size: 0.85rem; font-weight: 600; }
+.spam-hint, .expira-hint { color: #aaa; font-size: 0.78rem; margin: 0.3rem 0; }
+
+.bono-badge {
+  background: linear-gradient(135deg, #FF6B9D, #f97316);
+  color: white;
+  padding: 0.7rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 1rem 0;
+  display: inline-block;
+}

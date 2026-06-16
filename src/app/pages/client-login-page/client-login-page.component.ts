@@ -14,16 +14,16 @@ import { ClientAuthService } from '../../core/client-auth.service';
 export class ClientLoginPageComponent implements OnInit {
   form = { email: '', password: '' };
 
-  // Estado del flujo
-  paso = signal<'email' | 'password' | 'google'>('email');
-  tipoAcceso = signal<'google' | 'password' | 'nuevo' | ''>('');
-
+  // paso: 'email' → pide correo | 'password' → pide contraseña
+  paso = signal<'email' | 'password'>('email');
   isLoading = signal(false);
   isCheckingEmail = signal(false);
   error = signal('');
   mostrarPassword = signal(false);
   redirectUrl = signal('');
   tokenPendiente = signal('');
+  emailNoVerificado = signal(false);
+  reenvioExitoso = signal(false);
 
   constructor(
     private clientAuthService: ClientAuthService,
@@ -35,6 +35,9 @@ export class ClientLoginPageComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params['redirect']) this.redirectUrl.set(params['redirect']);
       if (params['token']) this.tokenPendiente.set(params['token']);
+      if (params['error'] === 'bloqueado') {
+        this.error.set('🔒 Tu cuenta ha sido bloqueada. Contacta al administrador.');
+      }
     });
     if (this.clientAuthService.isLoggedIn()) this.redirigir();
   }
@@ -47,24 +50,23 @@ export class ClientLoginPageComponent implements OnInit {
     }
   }
 
-  // Paso 1: verificar el correo
   async verificarCorreo() {
     if (!this.form.email.trim()) { this.error.set('Ingresa tu correo'); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.form.email)) { this.error.set('El correo no tiene un formato válido'); return; }
+    if (!emailRegex.test(this.form.email)) {
+      this.error.set('El correo no tiene un formato válido');
+      return;
+    }
 
     this.isCheckingEmail.set(true);
     this.error.set('');
     try {
       const tipo = await this.clientAuthService.verificarCorreo(this.form.email);
-      this.tipoAcceso.set(tipo);
-
-      if (tipo === 'google') {
-        this.paso.set('google');
-      } else if (tipo === 'password') {
+      if (tipo === 'existe') {
+        // Tiene cuenta — pedir contraseña
         this.paso.set('password');
       } else {
-        // Correo nuevo - redirigir a registro
+        // Cuenta nueva — ir al registro
         this.router.navigate(['/clientes/registro'], {
           queryParams: { email: this.form.email }
         });
@@ -76,22 +78,36 @@ export class ClientLoginPageComponent implements OnInit {
     }
   }
 
-  // Login con contraseña
   async login() {
     if (!this.form.password.trim()) { this.error.set('Ingresa tu contraseña'); return; }
     this.isLoading.set(true);
     this.error.set('');
+    this.emailNoVerificado.set(false);
     try {
       await this.clientAuthService.login(this.form.email, this.form.password);
       this.redirigir();
     } catch (error: any) {
-      this.error.set(error.message);
+      if (error.message === 'EMAIL_NOT_VERIFIED') {
+        this.emailNoVerificado.set(true);
+      } else {
+        this.error.set(error.message);
+      }
     } finally {
       this.isLoading.set(false);
     }
   }
 
-  // Login con Google
+  async reenviarVerificacion() {
+    try {
+      await this.clientAuthService.loginSinVerificar(this.form.email, this.form.password);
+      await this.clientAuthService.reenviarVerificacion();
+      await this.clientAuthService.logout();
+      this.reenvioExitoso.set(true);
+    } catch {
+      this.error.set('Error al reenviar. Intenta de nuevo.');
+    }
+  }
+
   async loginGoogle() {
     this.isLoading.set(true);
     this.error.set('');
@@ -107,14 +123,12 @@ export class ClientLoginPageComponent implements OnInit {
 
   resetPaso() {
     this.paso.set('email');
-    this.tipoAcceso.set('');
     this.form.password = '';
     this.error.set('');
+    this.emailNoVerificado.set(false);
+    this.reenvioExitoso.set(false);
   }
 
   togglePassword() { this.mostrarPassword.set(!this.mostrarPassword()); }
-
-  onEmailKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter') this.verificarCorreo();
-  }
+  onEmailKeydown(event: KeyboardEvent) { if (event.key === 'Enter') this.verificarCorreo(); }
 }

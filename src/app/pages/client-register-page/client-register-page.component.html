@@ -1,4 +1,70 @@
 <div class="register-page">
+
+  <!-- Pantalla de código de verificación -->
+  @if (mostrandoCodigo()) {
+    <div class="verificacion-exitosa">
+      <div class="verificacion-card">
+        @if (!codigoVerificado()) {
+          <div class="verificacion-emoji">📧</div>
+          <h2>Verifica tu correo</h2>
+          <p>Enviamos un código de 6 dígitos a:</p>
+          <div class="email-badge">{{ form.email }}</div>
+          <div class="codigo-input-group">
+            <input type="text" inputmode="numeric" maxlength="6"
+              placeholder="000000" class="codigo-input"
+              [value]="codigoInput()" (input)="soloNumerosInput($event)" />
+          </div>
+          @if (errorCodigo()) {
+            <div class="error-codigo">⚠️ {{ errorCodigo() }}</div>
+          }
+          <button class="btn-verificar" (click)="verificarCodigo()" [disabled]="verificandoCodigo()">
+            @if (verificandoCodigo()) { ⏳ Verificando... }
+            @else { ✅ Verificar código }
+          </button>
+          <div class="reenviar-section">
+            @if (reenvioExitoso()) {
+              <p class="reenvio-ok">✅ Código reenviado</p>
+            } @else {
+              <button class="btn-reenviar-codigo" (click)="reenviarCodigo()">🔄 Reenviar código</button>
+            }
+          </div>
+          <p class="spam-hint">¿No lo ves? Revisa tu carpeta de spam 📁</p>
+          <p class="expira-hint">⏱️ El código expira en 10 minutos</p>
+        } @else {
+          <div class="verificacion-emoji">🎉</div>
+          <h2>¡Cuenta verificada!</h2>
+          <p>Tu correo fue verificado. Ya puedes iniciar sesión y recibir tu bono de $20.</p>
+          <div class="bono-badge">🎁 $20 de cashback te esperan</div>
+          <a routerLink="/clientes/login" class="btn-ir-login">Iniciar sesión →</a>
+        }
+      </div>
+    </div>
+  }
+
+
+  <!-- Pantalla de verificación exitosa -->
+  @if (registroExitoso()) {
+    <div class="verificacion-exitosa">
+      <div class="verificacion-card">
+        <div class="verificacion-emoji">📧</div>
+        <h2>¡Cuenta creada!</h2>
+        <h3>Verifica tu correo</h3>
+        <p>Enviamos un link de activación a:</p>
+        <div class="email-badge">{{ form.email }}</div>
+        <p class="verificacion-pasos">
+          <strong>1.</strong> Abre tu correo<br>
+          <strong>2.</strong> Busca el email de <em>Corazón de Matías</em><br>
+          <strong>3.</strong> Haz clic en <strong>"Verificar correo"</strong><br>
+          <strong>4.</strong> Regresa aquí e inicia sesión
+        </p>
+        <p class="spam-hint">¿No lo ves? Revisa tu carpeta de spam 📁</p>
+        <a routerLink="/clientes/login" class="btn-ir-login">Ir a Iniciar Sesión →</a>
+      </div>
+    </div>
+  }
+
+  <!-- Formulario de registro -->
+  @if (!registroExitoso()) {
   <div class="register-card">
 
     @if (registroExitoso()) {
@@ -56,7 +122,7 @@
         <div class="form-group">
           <label>Teléfono *</label>
           <div class="input-wrapper">
-            <input type="tel" [(ngModel)]="form.telefono" name="telefono" placeholder="618 000 0000" />
+            <input type="tel" [(ngModel)]="form.telefono" name="telefono" (keypress)="soloNumeros($event)" maxlength="10" inputmode="numeric" placeholder="618 000 0000" />
           </div>
         </div>
       </div>
@@ -106,4 +172,5 @@
 
     }
   </div>
+  }
 </div>

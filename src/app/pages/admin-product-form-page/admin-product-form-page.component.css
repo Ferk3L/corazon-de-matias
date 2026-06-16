@@ -55,3 +55,111 @@
   .imagen-grid { grid-template-columns: repeat(2,1fr); }
   .admin-product-form { padding: 1rem; }
 }
+/* ===== CLOUDINARY UPLOAD ===== */
+.upload-zone {
+  border: 2.5px dashed #CBD5E0;
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: #F7FAFC;
+}
+
+.upload-zone:hover {
+  border-color: #FF6B9D;
+  background: #FFF5F7;
+}
+
+.upload-icon { font-size: 3rem; margin-bottom: 0.8rem; }
+.upload-title { font-size: 1rem; font-weight: 600; color: #333; margin: 0 0 0.3rem; }
+.upload-hint { font-size: 0.85rem; color: #888; margin: 0 0 0.5rem; }
+.upload-formats { font-size: 0.75rem; color: #aaa; margin: 0; }
+
+/* Preview */
+.image-preview-container {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  max-height: 300px;
+}
+
+.image-preview {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+  border-radius: 16px;
+}
+
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  padding: 1.5rem 1rem 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.uploading-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+}
+
+.upload-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.image-actions { display: flex; gap: 0.6rem; }
+
+.btn-change-image {
+  background: rgba(255,255,255,0.9);
+  color: #333;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-change-image:hover { background: white; }
+
+.btn-remove-image {
+  background: rgba(229,62,62,0.8);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-remove-image:hover { background: #c53030; }
+
+.upload-success {
+  font-size: 0.82rem;
+  color: #38a169;
+  margin: 0.5rem 0 0;
+  font-weight: 600;
+}

@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
   signOut, onAuthStateChanged, updateProfile, sendEmailVerification,
-  fetchSignInMethodsForEmail, GoogleAuthProvider, signInWithPopup,
-  User, Auth
+  GoogleAuthProvider, signInWithPopup, User, Auth
 } from 'firebase/auth';
 import { app } from '../app.config';
 import { CashbackService } from './cashback.service';
@@ -38,7 +37,6 @@ export class ClientAuthService {
       const result = await signInWithPopup(this.auth, provider);
       const user = result.user;
 
-      // Si es nuevo usuario, crear su perfil en Firestore
       const clienteExistente = await this.cashbackService.getCliente(user.uid);
       if (!clienteExistente) {
         const deviceId = await this.getDeviceId();
@@ -47,14 +45,8 @@ export class ClientAuthService {
           email: user.email || '',
           deviceId
         });
-
-        // Bono QR si viene de escanear
-        if (desdeQR) {
-          const yaUsoBono = await this.cashbackService.dispositivoYaUsoBono(deviceId);
-          if (!yaUsoBono) {
-            await this.cashbackService.aplicarBonoBienvenida(user.uid);
-          }
-        }
+        const yaUsoBono = await this.cashbackService.dispositivoYaUsoBono(deviceId);
+        if (!yaUsoBono) await this.cashbackService.aplicarBonoBienvenida(user.uid);
       }
     } catch (error: any) {
       if (error.code === 'auth/popup-closed-by-user') return;
@@ -62,14 +54,25 @@ export class ClientAuthService {
     }
   }
 
-  // ── Verificar si un correo ya tiene cuenta ──
-  async verificarCorreo(email: string): Promise<'google' | 'password' | 'nuevo'> {
+  // ── Verificar correo — sin fetchSignInMethodsForEmail (deprecado) ──
+  // Simplemente intenta login con password vacío para detectar si existe la cuenta
+  async verificarCorreo(email: string): Promise<'existe' | 'nuevo'> {
     try {
-      const metodos = await fetchSignInMethodsForEmail(this.auth, email);
-      if (metodos.includes('google.com')) return 'google';
-      if (metodos.includes('password')) return 'password';
-      return 'nuevo';
-    } catch {
+      // Intentamos un login con contraseña vacía — siempre fallará
+      // pero el código de error nos dice si la cuenta existe
+      await signInWithEmailAndPassword(this.auth, email, '___DUMMY___');
+      return 'existe'; // nunca llega aquí
+    } catch (error: any) {
+      const code = error.code;
+      // Estos errores significan que la cuenta SÍ existe
+      if (
+        code === 'auth/wrong-password' ||
+        code === 'auth/invalid-credential' ||
+        code === 'auth/too-many-requests'
+      ) {
+        return 'existe';
+      }
+      // auth/user-not-found o auth/invalid-email = cuenta nueva
       return 'nuevo';
     }
   }
@@ -83,17 +86,14 @@ export class ClientAuthService {
       const credential = await createUserWithEmailAndPassword(this.auth, email, password);
       const user = credential.user;
       await updateProfile(user, { displayName: nombre });
-
-      // Enviar verificación de correo
       await sendEmailVerification(user);
 
       const deviceId = await this.getDeviceId();
       await this.cashbackService.crearCliente(user.uid, { nombre, email, telefono, deviceId });
 
-      if (desdeQR) {
-        const yaUsoBono = await this.cashbackService.dispositivoYaUsoBono(deviceId);
-        if (!yaUsoBono) await this.cashbackService.aplicarBonoBienvenida(user.uid);
-      }
+      const yaUsoBono = await this.cashbackService.dispositivoYaUsoBono(deviceId);
+      if (!yaUsoBono) await this.cashbackService.aplicarBonoBienvenida(user.uid);
+
     } catch (error: any) {
       throw new Error(this.traducirError(error.code));
     }
@@ -104,8 +104,20 @@ export class ClientAuthService {
     try {
       await signInWithEmailAndPassword(this.auth, email, password);
     } catch (error: any) {
+      if (error.message === 'EMAIL_NOT_VERIFIED') throw error;
       throw new Error(this.traducirError(error.code));
     }
+  }
+
+  // ── Login sin verificar email (para reenviar código) ──
+  async loginSinVerificar(email: string, password: string): Promise<void> {
+    await signInWithEmailAndPassword(this.auth, email, password);
+  }
+
+  // ── Reenviar email de verificación ──
+  async reenviarVerificacion(): Promise<void> {
+    const user = this.auth.currentUser;
+    if (user && !user.emailVerified) await sendEmailVerification(user);
   }
 
   async logout(): Promise<void> {

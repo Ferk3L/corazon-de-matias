@@ -1,66 +1,82 @@
 <div class="home-page">
 
-  <!-- Hero Section -->
+  <!-- HERO -->
   <section class="hero-section">
+    <div class="hero-bg-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
     <div class="hero-content">
-      <h1 class="hero-title">Fábrica de Dulces<br><span class="highlight">Corazón de Matías</span></h1>
-      <p class="hero-subtitle">Endulzando momentos especiales con las mejores gomitas artesanales</p>
+      <div class="hero-badge">🍬 Artesanal &amp; Natural · Durango, México</div>
+      <h1 class="hero-title">
+        Fábrica de Dulces
+        <span class="highlight">Corazón de Matías</span>
+      </h1>
+      <p class="hero-subtitle">Gomitas artesanales hechas con amor, los mejores ingredientes y mucho sabor. Endulzamos cada momento especial.</p>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">100%</span>
+          <span class="stat-label">Artesanal</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">100%</span>
+          <span class="stat-label">Grenetina</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">$20</span>
+          <span class="stat-label">Bono registro</span>
+        </div>
+      </div>
+
       <div class="hero-buttons">
-        <button class="btn-primary" (click)="orderOnWhatsApp()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-          </svg>
-          Hacer Pedido
-        </button>
-        <a routerLink="/catalogo" class="btn-secondary">Ver Catálogo</a>
+        <a routerLink="/catalogo" class="btn-primary">
+          🛒 Ver Catálogo y Ordenar
+        </a>
+        <a routerLink="/clientes/registro" class="btn-secondary">
+          💰 Programa Cashback
+        </a>
       </div>
     </div>
     <div class="hero-image">
-      <div class="image-placeholder">
-        <img src="/images/corazon-de-matias-inicio.jpg" alt="Corazón de Matías - Fábrica de Dulces">
+      <div class="image-frame">
+        <div class="image-glow"></div>
+        <img src="/images/corazon-de-matias-logo.jpg" alt="Corazón de Matías">
+        <div class="image-tag">🌟 ¡Recién hechas!</div>
       </div>
     </div>
   </section>
 
-  <!-- Presentación del Negocio -->
-  <section class="about-section">
-    <div class="container">
-      <h2>¿Quiénes Somos?</h2>
-      <p class="section-description">
-        En <strong>Fábrica de Dulces Corazón de Matías</strong>, creamos gomitas artesanales 
-        con amor y dedicación. Cada producto es elaborado con ingredientes de la más alta calidad 
-        para garantizar el mejor sabor y la mayor frescura.
-      </p>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">🍬</div>
-          <h3>100% Artesanal</h3>
-          <p>Elaboradas a mano con técnicas tradicionales</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">✨</div>
-          <h3>Ingredientes Premium</h3>
-          <p>Solo usamos los mejores ingredientes naturales</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">💖</div>
-          <h3>Hecho con Amor</h3>
-          <p>Cada gomita lleva nuestro corazón</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🚚</div>
-          <h3>Envío Rápido</h3>
-          <p>Entrega en 2-3 días hábiles</p>
-        </div>
-      </div>
+  <!-- FEATURES STRIP -->
+  <section class="features-strip">
+    <div class="feature-item">
+      <span class="feature-icon">🍬</span>
+      <div><strong>100% Artesanal</strong><p>Elaboradas a mano</p></div>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">✨</span>
+      <div><strong>Ingredientes Premium</strong><p>Solo lo mejor</p></div>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">💰</span>
+      <div><strong>Precios especiales</strong><p>Por volumen de compra</p></div>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">🚚</span>
+      <div><strong>Envío Rápido</strong><p>1-2 días hábiles</p></div>
     </div>
   </section>
 
-  <!-- Productos Destacados -->
+  <!-- PRODUCTOS DESTACADOS -->
   <section class="products-section">
     <div class="container">
+      <div class="section-tag light">Nuestros dulces</div>
       <h2>Productos Destacados</h2>
-      <p class="section-description">Descubre nuestras gomitas más populares</p>
+      <p class="section-desc">Descubre nuestras gomitas más populares</p>
+
       @if (isLoading()) {
         <div class="loading-container">
           <div class="loading-spinner"></div>
@@ -68,87 +84,75 @@
         </div>
       } @else if (featuredProducts().length === 0) {
         <div class="no-products">
+          <span>🍬</span>
           <p>Próximamente nuevos productos disponibles</p>
         </div>
       } @else {
         <div class="products-grid">
           @for (product of featuredProducts(); track product.id) {
-            <a [routerLink]="['/catalogo', product.id]" class="product-card">
+            <a [routerLink]="['/producto', product.id]" class="product-card">
               <div class="product-image">
                 <img [src]="product.image" [alt]="product.name">
+                <div class="product-badge">⭐ Destacado</div>
+                <div class="product-overlay">Ver detalles →</div>
               </div>
               <div class="product-info">
                 <h3>{{ product.name }}</h3>
                 <p>{{ product.description }}</p>
                 <div class="product-footer">
-                  <span class="price">{{ product.price }}</span>
-                  <button class="order-btn" (click)="orderOnWhatsApp(); $event.preventDefault(); $event.stopPropagation();">Ordenar</button>
+                  <div class="precios-mini">
+                    <span class="precio-mini menudeo">$100<small>/kg</small></span>
+                    <span class="precio-mini mayoreo">$85<small>/kg 10kg+</small></span>
+                  </div>
                 </div>
               </div>
             </a>
           }
         </div>
       }
+
       <div class="view-all">
-        <a routerLink="/catalogo" class="btn-secondary">Ver Todos los Productos</a>
+        <a routerLink="/catalogo" class="btn-outline-white">Ver todos los productos →</a>
       </div>
     </div>
   </section>
 
-  <!-- ===== CLIENTES FRECUENTES ===== -->
+
+
+  <!-- CASHBACK SECTION -->
   <section class="cashback-section">
     <div class="container">
       <div class="cashback-content">
         <div class="cashback-text">
           <div class="cashback-badge">💰 Programa de Lealtad</div>
           <h2>¡Gana cashback en cada compra!</h2>
-          <p class="cashback-desc">Únete a nuestro programa de clientes frecuentes y acumula saldo en cada pedido de 5kg o más.</p>
-
+          <p class="cashback-desc">Únete y acumula saldo en cada pedido de 1kg o más.</p>
           <div class="cashback-beneficios">
             <div class="beneficio">
               <span class="beneficio-icon">🎉</span>
-              <div>
-                <strong>$20 de bienvenida</strong>
-                <p>Al registrarte escaneando nuestro QR</p>
-              </div>
+              <div><strong>$20 de bienvenida</strong><p>Al registrarte escaneando nuestro QR</p></div>
             </div>
             <div class="beneficio">
               <span class="beneficio-icon">📦</span>
-              <div>
-                <strong>5% cashback</strong>
-                <p>En cada compra de 5kg o más</p>
-              </div>
+              <div><strong>5% cashback</strong><p>En cada compra de 1kg o más</p></div>
             </div>
             <div class="beneficio">
               <span class="beneficio-icon">💳</span>
-              <div>
-                <strong>Úsalo cuando quieras</strong>
-                <p>Aplica tu saldo en tu próxima compra</p>
-              </div>
+              <div><strong>Úsalo cuando quieras</strong><p>Aplica tu saldo en tu próxima compra</p></div>
             </div>
           </div>
-
           @if (!isClienteLogueado()) {
             <div class="cashback-buttons">
               <a routerLink="/clientes/registro" class="btn-cashback-primary">Crear mi cuenta gratis</a>
               <a routerLink="/clientes/login" class="btn-cashback-secondary">Ya tengo cuenta</a>
             </div>
-          }
-
-          @if (isClienteLogueado()) {
+          } @else {
             <div class="cliente-bienvenida">
               <p>👋 Hola, <strong>{{ getNombreUsuario() }}</strong></p>
-              <a routerLink="/clientes/mi-cuenta" class="btn-cashback-primary">
-                Ver mi saldo → ${{ getSaldo() }}
-              </a>
-              <button (click)="cerrarSesion()" class="btn-cashback-secondary"
-                style="border:none;cursor:pointer;margin-top:8px;display:block;width:100%;text-align:center;">
-                Cerrar sesión
-              </button>
+              <a routerLink="/clientes/mi-cuenta" class="btn-cashback-primary">Ver mi saldo → ${{ getSaldo() }}</a>
             </div>
           }
         </div>
-
         <div class="cashback-visual">
           @if (!isClienteLogueado()) {
             <div class="cashback-card-preview">
@@ -161,18 +165,11 @@
                 <h3>$20.00</h3>
               </div>
               <div class="card-preview-info">
-                <div class="card-stat">
-                  <span>Compras 5kg+</span>
-                  <strong>5% cashback</strong>
-                </div>
-                <div class="card-stat">
-                  <span>Registro</span>
-                  <strong>¡Gratis!</strong>
-                </div>
+                <div class="card-stat"><span>Compras 1kg+</span><strong>5% cashback</strong></div>
+                <div class="card-stat"><span>Registro</span><strong>¡Gratis!</strong></div>
               </div>
             </div>
-          }
-          @if (isClienteLogueado()) {
+          } @else {
             <div class="cashback-card-preview logueado">
               <div class="card-preview-header">
                 <span>🍬 {{ getNombreUsuario() }}</span>
@@ -183,14 +180,8 @@
                 <h3>${{ getSaldo() }}</h3>
               </div>
               <div class="card-preview-info">
-                <div class="card-stat">
-                  <span>Total compras</span>
-                  <strong>${{ getTotalCompras() }}</strong>
-                </div>
-                <div class="card-stat">
-                  <span>Próxima compra</span>
-                  <strong>+5% más</strong>
-                </div>
+                <div class="card-stat"><span>Total compras</span><strong>${{ getTotalCompras() }}</strong></div>
+                <div class="card-stat"><span>Próxima compra</span><strong>+5% más</strong></div>
               </div>
             </div>
           }
@@ -199,17 +190,14 @@
     </div>
   </section>
 
-  <!-- Call to Action -->
+  <!-- CTA FINAL -->
   <section class="cta-section">
     <div class="container">
+      <div class="cta-icon">🍬</div>
       <h2>¿Listo para Endulzar tu Día?</h2>
-      <p>Haz tu pedido ahora y recibe nuestras deliciosas gomitas en la puerta de tu casa</p>
-      <button class="btn-primary" (click)="orderOnWhatsApp()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-        </svg>
-        Contactar por WhatsApp
-      </button>
+      <p>Elige tus gomitas favoritas, arma tu pedido y lo confirmamos por WhatsApp</p>
+      <a routerLink="/catalogo" class="btn-cta">Ver Catálogo y Ordenar</a>
     </div>
   </section>
+
 </div>

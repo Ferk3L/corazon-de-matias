@@ -1,52 +1,80 @@
 <div class="review-list">
-  <div class="review-summary" *ngIf="!isLoading">
-    <div class="rating-display">
-        <div class="average-rating">
-          <span class="rating-number">{{ averageRating.toFixed(1) }}</span>
-          <div class="stars">
-            <span *ngFor="let i of [1,2,3,4,5]" 
-                  [class.filled]="i <= roundRating()" 
-                  [class.empty]="i > roundRating()"
-                  class="star">★</span>
+
+  @if (isLoading) {
+    <div class="loading"><div class="spinner"></div><p>Cargando reseñas...</p></div>
+  }
+
+  @if (!isLoading && !hasError) {
+
+    <!-- Resumen de calificación -->
+    @if (totalReviews > 0) {
+      <div class="review-summary">
+        <div class="rating-big">{{ averageRating.toFixed(1) }}</div>
+        <div class="stars-row">
+          @for (i of [1,2,3,4,5]; track i) {
+            <span class="star" [class.filled]="i <= roundRating()">★</span>
+          }
+        </div>
+        <div class="total-count">{{ totalReviews }} {{ totalReviews === 1 ? 'reseña' : 'reseñas' }}</div>
+      </div>
+    }
+
+    <!-- Lista de reseñas -->
+    <div class="reviews-container">
+      @for (review of reviews; track review.id) {
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-author-info">
+              <div class="author-avatar">{{ (review.authorName || 'A')[0].toUpperCase() }}</div>
+              <div>
+                <strong class="author-name">{{ review.isAnonymous ? 'Anónimo' : (review.authorName || 'Usuario') }}</strong>
+                <div class="review-date">{{ formatDate(review.createdAt) }}</div>
+              </div>
+            </div>
+            <div class="review-stars">
+              @for (i of [1,2,3,4,5]; track i) {
+                <span class="star-sm" [class.filled]="i <= review.rating">★</span>
+              }
+            </div>
           </div>
-          <span class="total-reviews">({{ totalReviews }} {{ totalReviews === 1 ? 'reseña' : 'reseñas' }})</span>
+
+          <p class="review-comment">{{ review.comment }}</p>
+
+          <!-- Footer: likes -->
+          <div class="review-footer">
+            <!-- Like del admin (corazón dorado) -->
+            @if (review.adminLike) {
+              <div class="admin-like-badge">
+                <span>👑</span> Le encantó al equipo
+              </div>
+            }
+
+            <!-- Like de clientes -->
+            <button
+              class="like-btn"
+              [class.liked]="userLiked(review)"
+              (click)="toggleLike(review)"
+              [disabled]="!currentUserUid()">
+              <span class="heart">{{ userLiked(review) ? '❤️' : '🤍' }}</span>
+              <span class="like-count">{{ likesCount(review) }}</span>
+            </button>
+          </div>
         </div>
-    </div>
-  </div>
+      }
 
-  <div class="loading" *ngIf="isLoading">
-    <p>Cargando reseñas...</p>
-  </div>
-
-  <div class="error-message" *ngIf="hasError && !isLoading">
-    <p>{{ errorMessage }}</p>
-    <p class="error-hint">Abre la consola del navegador (F12) para ver más detalles. Verifica las reglas de seguridad de Firestore.</p>
-  </div>
-
-  <div class="reviews-container" *ngIf="!isLoading && !hasError">
-    <div class="review-item" *ngFor="let review of reviews">
-      <div class="review-header">
-        <div class="review-author">
-          <strong>{{ review.isAnonymous ? 'Anónimo' : (review.authorName || 'Usuario') }}</strong>
+      @if (reviews.length === 0) {
+        <div class="no-reviews">
+          <span>⭐</span>
+          <p>No hay reseñas aún. ¡Sé el primero en dejar una opinión!</p>
         </div>
-        <div class="review-date">{{ formatDate(review.createdAt) }}</div>
-      </div>
-      
-      <div class="review-rating">
-        <span *ngFor="let i of [1,2,3,4,5]" 
-              [class.filled]="i <= review.rating" 
-              [class.empty]="i > review.rating"
-              class="star">★</span>
-      </div>
-      
-      <div class="review-comment">
-        {{ review.comment }}
-      </div>
+      }
     </div>
+  }
 
-    <div class="no-reviews" *ngIf="reviews.length === 0">
-      <p>No hay reseñas aún. ¡Sé el primero en dejar una opinión!</p>
+  @if (hasError && !isLoading) {
+    <div class="error-state">
+      <p>No se pudieron cargar las reseñas</p>
     </div>
-  </div>
+  }
+
 </div>
-

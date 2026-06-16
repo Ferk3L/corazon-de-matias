@@ -1,11 +1,44 @@
 <div class="catalog-page">
   <section class="hero-section">
     <h1>Nuestro Catálogo</h1>
-    <p class="subtitle">Descubre todos nuestros deliciosos productos</p>
+    <p class="subtitle">Selecciona los productos y arma tu pedido</p>
   </section>
+
+  <!-- CARRITO FLOTANTE -->
+  @if (cartService.count() > 0) {
+    <div class="carrito-flotante">
+      <div class="carrito-info">
+        <span class="carrito-icon">🛒</span>
+        <div>
+          <strong>{{ cartService.count() }} producto{{ cartService.count() > 1 ? 's' : '' }}</strong>
+          <span>· {{ cartService.totalKg() }} kg</span>
+        </div>
+        @if (cartService.esMayoreo()) {
+          <span class="mayoreo-tag">🎉 Precio mayoreo</span>
+        } @else {
+          <span class="mayoreo-hint">+{{ cartService.kgParaMayoreo() }}kg = mayoreo</span>
+        }
+        <strong class="carrito-total">${{ cartService.total() }}</strong>
+      </div>
+      <button class="btn-ver-pedido" (click)="irAPedidos()">Ver pedido →</button>
+    </div>
+  }
+
+  <!-- TOAST -->
+  @if (notifVisible()) {
+    <div class="toast-notif">
+      ✅ {{ notifProducto() }} agregado
+      @if (cartService.kgParaMayoreo() > 0) {
+        · Agrega {{ cartService.kgParaMayoreo() }}kg más para precio mayoreo
+      }
+    </div>
+  }
 
   <section class="products-section">
     <div class="container">
+
+
+
       @if (isLoading()) {
         <div class="loading-container">
           <div class="loading-spinner"></div>
@@ -17,17 +50,21 @@
           <button class="retry-btn" (click)="loadProducts()">Reintentar</button>
         </div>
       } @else if (products().length === 0) {
-        <div class="no-products">
-          <p>No hay productos disponibles en este momento.</p>
-        </div>
+        <div class="no-products"><p>No hay productos disponibles.</p></div>
       } @else {
         <div class="products-grid">
           @for (product of products(); track product.id) {
-            <div class="product-card">
+            <div class="product-card" [class.en-carrito]="estaEnCarrito(product.id)">
+
+              @if (estaEnCarrito(product.id)) {
+                <div class="en-carrito-badge">✅ {{ kgEnCarrito(product.id) }}kg en carrito</div>
+              }
+
               <div class="product-image">
                 <img [src]="product.image" [alt]="product.name">
                 <a [routerLink]="['/producto', product.id]" class="view-details-link">Ver Detalles</a>
               </div>
+
               <div class="product-info">
                 <h3>{{ product.name }}</h3>
                 <p class="description">{{ product.description }}</p>
@@ -39,37 +76,48 @@
                         <span [class.filled]="star <= roundRating(product.averageRating!)" class="star">★</span>
                       }
                     </div>
-                    <span class="rating-text">
-                      {{ product.averageRating.toFixed(1) }}
-                      @if (product.reviewCount) { ({{ product.reviewCount }}) }
-                    </span>
+                    <span class="rating-text">{{ product.averageRating.toFixed(1) }}</span>
                   </div>
                 }
 
-                <div class="product-footer">
-                  <div class="precios-container">
-                    @if (product.priceMayoreo && product.priceMenudeo && product.priceMayoreo !== product.priceMenudeo) {
-                      <div class="precio-mayoreo">
-                        <span class="precio-label">Mayoreo (5kg+)</span>
-                        <span class="precio-valor">{{ formatPrice(product.priceMayoreo) }}/kg</span>
-                      </div>
-                      <div class="precio-menudeo">
-                        <span class="precio-label">Menudeo</span>
-                        <span class="precio-valor">{{ formatPrice(product.priceMenudeo) }}/kg</span>
-                      </div>
-                    } @else {
-                      <span class="price">{{ formatPrice(product.price) }}/kg</span>
-                    }
+                <!-- Precios del producto -->
+                <div class="precios-card">
+                  <div class="precio-row" [class.activo]="!cartService.esMayoreo()">
+                    <span>Menudeo <small>(&lt;10kg)</small></span>
+                    <strong>${{ product.priceMenudeo || product.price }}/kg</strong>
                   </div>
-                  <button class="order-btn" (click)="orderOnWhatsApp(product.name)">
-                    Ordenar
+                  <div class="precio-row mayoreo" [class.activo]="cartService.esMayoreo()">
+                    <span>Mayoreo <small>(10kg+)</small></span>
+                    <strong>${{ product.priceMayoreo || product.price }}/kg 🎉</strong>
+                  </div>
+                </div>
+
+                <!-- Selector kg + agregar -->
+                <div class="agregar-carrito">
+                  <div class="kg-selector">
+                    <button class="kg-btn" (click)="setKg(product.id, getKg(product.id) - 1)">−</button>
+                    <span class="kg-valor">{{ getKg(product.id) }} kg</span>
+                    <button class="kg-btn" (click)="setKg(product.id, getKg(product.id) + 1)">+</button>
+                  </div>
+                  <button class="btn-agregar" (click)="agregarAlCarrito(product)">
+                    🛒 Agregar
                   </button>
                 </div>
+
               </div>
             </div>
           }
         </div>
+
+        @if (cartService.count() > 0) {
+          <div class="ir-pedido-bottom">
+            <button class="btn-ir-pedido" (click)="irAPedidos()">
+              Ver mi pedido ({{ cartService.totalKg() }}kg — ${{ cartService.total() }}) →
+            </button>
+          </div>
+        }
       }
+
     </div>
   </section>
 </div>

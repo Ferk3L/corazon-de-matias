@@ -1,0 +1,63 @@
+<div class="buzon-page">
+  <div class="buzon-container">
+
+    @if (enviado()) {
+      <!-- Pantalla de éxito -->
+      <div class="buzon-exito">
+        <div class="exito-emoji">🎉</div>
+        <h2>¡Mensaje enviado!</h2>
+        <p>Gracias por tomarte el tiempo de escribirnos. Tu opinión es muy importante para nosotros y la revisaremos pronto.</p>
+        <button class="btn-nuevo" (click)="reiniciar()">Enviar otro mensaje</button>
+      </div>
+    } @else {
+      <div class="buzon-header">
+        <div class="buzon-icon">📬</div>
+        <h2>Buzón de sugerencias</h2>
+        <p>Tu opinión nos ayuda a mejorar. Cuéntanos lo que piensas.</p>
+      </div>
+
+      <!-- Tipo de mensaje -->
+      <div class="tipo-grid">
+        @for (tipo of tiposDisponibles; track tipo.value) {
+          <div class="tipo-card" [class.selected]="form.tipo === tipo.value"
+            (click)="form.tipo = tipo.value">
+            <span class="tipo-emoji">{{ tipo.label.split(' ')[0] }}</span>
+            <span class="tipo-name">{{ tipo.label.split(' ')[1] }}</span>
+            <span class="tipo-desc">{{ tipo.desc }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Mensaje -->
+      <div class="form-group">
+        <label>Tu mensaje *</label>
+        <textarea [(ngModel)]="form.mensaje" name="mensaje" rows="5"
+          placeholder="Cuéntanos tu experiencia, sugerencia o comentario..."
+          maxlength="500"></textarea>
+        <span class="char-count">{{ form.mensaje.length }}/500</span>
+      </div>
+
+      <!-- Datos opcionales -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre <small>(opcional)</small></label>
+          <input type="text" [(ngModel)]="form.nombre" name="nombre" placeholder="Tu nombre" />
+        </div>
+        <div class="form-group">
+          <label>Correo <small>(opcional)</small></label>
+          <input type="email" [(ngModel)]="form.email" name="email" placeholder="Para responderte" />
+        </div>
+      </div>
+
+      @if (error()) {
+        <div class="error-msg">⚠️ {{ error() }}</div>
+      }
+
+      <button class="btn-enviar" (click)="enviar()" [disabled]="isLoading()">
+        @if (isLoading()) { <span class="spinner"></span> Enviando... }
+        @else { 📤 Enviar mensaje }
+      </button>
+    }
+
+  </div>
+</div>

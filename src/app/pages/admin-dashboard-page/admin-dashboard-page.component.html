@@ -1,470 +1,581 @@
-<div class="admin-dashboard">
+<div class="admin-layout">
 
-  <!-- Header -->
-  <header class="admin-header">
-    <div class="header-content">
-      <div class="header-title">
-        <div class="header-logo">🍬</div>
-        <div>
-          <h1>Panel de Administración</h1>
-          <p>Fábrica de Dulces Corazón de Matías</p>
-        </div>
-      </div>
-      <div class="header-right">
-        @if (totalNuevos() > 0) {
-          <div class="notif-badge" (click)="onTabChange('orders')">
-            🔔 {{ totalNuevos() }} nuevo{{ totalNuevos() > 1 ? 's' : '' }}
-          </div>
-        }
-        <button (click)="logout()" class="logout-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16 17 21 12 16 7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
-          </svg>
-          Cerrar Sesión
-        </button>
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">🍬</span>
+      <div>
+        <h2>Corazón de Matías</h2>
+        <p>Panel de Administración</p>
       </div>
     </div>
-  </header>
-
-  <div class="dashboard-content">
-
-    <!-- Tabs -->
-    <div class="tabs-container">
-      <nav class="tabs-nav">
-        <button (click)="onTabChange('stats')" [class.active]="activeTab() === 'stats'" class="tab-button">
-          📊 Estadísticas
-        </button>
-        <button (click)="onTabChange('products')" [class.active]="activeTab() === 'products'" class="tab-button">
-          🛍️ Productos
-        </button>
-        <button (click)="onTabChange('orders')" [class.active]="activeTab() === 'orders'" class="tab-button">
-          📋 Pedidos
-          @if (totalNuevos() > 0) {
-            <span class="tab-badge">{{ totalNuevos() }}</span>
-          }
-        </button>
-        <button (click)="onTabChange('blog')" [class.active]="activeTab() === 'blog'" class="tab-button">
-          📝 Blog
-        </button>
-        <button (click)="onTabChange('clientes')" [class.active]="activeTab() === 'clientes'" class="tab-button">
-          👥 Clientes
-        </button>
-        <button (click)="onTabChange('usuarios')" [class.active]="activeTab() === 'usuarios'" class="tab-button">
-          🔐 Usuarios
-        </button>
-      </nav>
-    </div>
-
-    <!-- Error -->
-    <div *ngIf="error()" class="error-banner">
-      ⚠️ {{ error() }}
-    </div>
-
-    <!-- ── ESTADÍSTICAS ── -->
-    <div *ngIf="activeTab() === 'stats'">
-      <div *ngIf="isLoading()" class="loading-container">
-        <div class="loading-spinner"></div>
-        <p>Cargando estadísticas...</p>
-      </div>
-      <div *ngIf="!isLoading() && stats()" class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">📦</div>
-          <div class="stat-info">
-            <div class="stat-label">Total Pedidos</div>
-            <div class="stat-value">{{ stats().total }}</div>
-          </div>
-        </div>
-        <div class="stat-card yellow">
-          <div class="stat-icon">⏳</div>
-          <div class="stat-info">
-            <div class="stat-label">Pendientes</div>
-            <div class="stat-value">{{ stats().pending }}</div>
-          </div>
-        </div>
-        <div class="stat-card green">
-          <div class="stat-icon">✅</div>
-          <div class="stat-info">
-            <div class="stat-label">Completados</div>
-            <div class="stat-value">{{ stats().completed }}</div>
-          </div>
-        </div>
-        <div class="stat-card purple">
-          <div class="stat-icon">💰</div>
-          <div class="stat-info">
-            <div class="stat-label">Ingresos Totales</div>
-            <div class="stat-value">{{ formatPrice(stats().totalRevenue) }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── PRODUCTOS ── -->
-    <div *ngIf="activeTab() === 'products'">
-      <div class="section-header">
-        <div>
-          <h2>Gestión de Productos</h2>
-          <p>Administra tu catálogo</p>
-        </div>
-        <a routerLink="/admin/products/new" class="btn-primary">+ Nuevo Producto</a>
-      </div>
-      <div *ngIf="isLoading()" class="loading-container">
-        <div class="loading-spinner"></div><p>Cargando productos...</p>
-      </div>
-      <div *ngIf="!isLoading() && products().length > 0" class="products-grid">
-        <div *ngFor="let product of products(); trackBy: trackByProductId" class="product-card-admin">
-          <div class="product-image-admin">
-            <img [src]="product.image" [alt]="product.name" />
-            <span [class]="'product-status-badge ' + (product.available ? 'available' : 'unavailable')">
-              {{ product.available ? '✓ Disponible' : '✗ No disponible' }}
-            </span>
-            @if (product.featured) {
-              <span class="featured-badge">⭐ Destacado</span>
-            }
-          </div>
-          <div class="product-info-admin">
-            <h3>{{ product.name }}</h3>
-            <p>{{ product.description }}</p>
-            <div class="product-price-admin">{{ formatPrice(product.price) }}/kg</div>
-            <div class="product-actions">
-              <a [routerLink]="['/admin/products', product.id, 'edit']" class="action-btn edit">✏️ Editar</a>
-              <button (click)="deleteProduct(product.id!)" class="action-btn delete">🗑️ Eliminar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div *ngIf="!isLoading() && products().length === 0" class="empty-state">
-        <div class="empty-icon">📦</div>
-        <h3>No hay productos</h3>
-        <p>Agrega tu primer producto al catálogo</p>
-        <a routerLink="/admin/products/new" class="btn-primary" style="margin-top:1rem;">Crear producto</a>
-      </div>
-    </div>
-
-    <!-- ── PEDIDOS ── -->
-    <div *ngIf="activeTab() === 'orders'">
-      <div class="section-header">
-        <div>
-          <h2>Gestión de Pedidos</h2>
-          <p>Administra y rastrea todos los pedidos</p>
-        </div>
-      </div>
-      <div *ngIf="isLoading()" class="loading-container">
-        <div class="loading-spinner"></div><p>Cargando pedidos...</p>
-      </div>
-      <div *ngIf="!isLoading() && orders().length > 0" style="overflow-x:auto;">
-        <table class="orders-table">
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Total</th>
-              <th>Entrega</th>
-              <th>Estado</th>
-              <th>Fecha</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let order of orders()">
-              <td>
-                <div class="customer-name">{{ order.name }}</div>
-                <div class="customer-detail">{{ order.email }}</div>
-                <div class="customer-detail">{{ order.phone }}</div>
-                @if (order.clienteUid) {
-                  <span class="cliente-badge">✅ Registrado</span>
-                }
-              </td>
-              <td>{{ order.product }}</td>
-              <td>{{ order.quantity }} kg</td>
-              <td class="order-total">{{ formatPrice(order.total) }}</td>
-              <td style="font-size:12px;color:#64748b;max-width:150px;">{{ order.address }}</td>
-              <td>
-                <span [class]="'status-badge ' + order.status">
-                  {{ getStatusText(order.status) }}
-                </span>
-              </td>
-              <td class="order-date">{{ formatDate(order.createdAt) }}</td>
-              <td>
-                <select [value]="order.status" (change)="updateOrderStatus(order.id!, $event)" class="status-select">
-                  <option value="pending">Pendiente</option>
-                  <option value="confirmed">Confirmado</option>
-                  <option value="completed">Completado</option>
-                  <option value="cancelled">Cancelado</option>
-                </select>
-                @if (order.clienteUid && !order.cashbackGenerado) {
-                  <button (click)="generarQRCashback(order)" class="btn-qr">📱 QR Cashback</button>
-                }
-                @if (order.cashbackGenerado) {
-                  <span class="qr-done">✅ QR enviado</span>
-                }
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div *ngIf="!isLoading() && orders().length === 0" class="empty-state">
-        <div class="empty-icon">📋</div>
-        <h3>No hay pedidos</h3>
-        <p>Los pedidos aparecerán aquí cuando los clientes realicen compras</p>
-      </div>
-    </div>
-
-    <!-- ── BLOG ── -->
-    <div *ngIf="activeTab() === 'blog'">
-      <div class="section-header">
-        <div>
-          <h2>Gestión del Blog</h2>
-          <p>Administra los artículos</p>
-        </div>
-        <button (click)="openBlogForm()" class="btn-primary">+ Nuevo Artículo</button>
-      </div>
-      <div *ngIf="isLoading()" class="loading-container">
-        <div class="loading-spinner"></div><p>Cargando artículos...</p>
-      </div>
-      <div *ngIf="!isLoading() && blogPosts().length > 0" class="blog-grid">
-        <div *ngFor="let post of blogPosts(); trackBy: trackByPostId" class="blog-card-admin">
-          <div class="blog-image-admin">
-            <img [src]="post.image" [alt]="post.title" onerror="this.style.display='none'" />
-            <span class="blog-category-badge">{{ post.category }}</span>
-            <span [class]="'blog-status-badge ' + (post.published ? 'published' : 'draft')">
-              {{ post.published ? '✓ Publicado' : '○ Borrador' }}
-            </span>
-          </div>
-          <div class="blog-info-admin">
-            <div class="blog-date">📅 {{ post.date }}</div>
-            <h3>{{ post.title }}</h3>
-            <p>{{ post.excerpt }}</p>
-            <div class="product-actions">
-              <button (click)="openBlogForm(post)" class="action-btn edit">✏️ Editar</button>
-              <button (click)="togglePostPublished(post)" class="action-btn">
-                {{ post.published ? '📤 Despublicar' : '📥 Publicar' }}
-              </button>
-              <button (click)="deleteBlogPost(post.id!)" class="action-btn delete">🗑️ Eliminar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div *ngIf="!isLoading() && blogPosts().length === 0" class="empty-state">
-        <div class="empty-icon">📝</div>
-        <h3>No hay artículos</h3>
-        <button (click)="openBlogForm()" class="btn-primary" style="margin-top:1rem;">Crear artículo</button>
-      </div>
-    </div>
-
-    <!-- ── CLIENTES ── -->
-    <div *ngIf="activeTab() === 'clientes'">
-      <div class="section-header">
-        <div>
-          <h2>👥 Clientes Frecuentes</h2>
-          <p>Gestiona saldos de cashback</p>
-        </div>
-      </div>
-      <div *ngIf="isLoading()" class="loading-container">
-        <div class="loading-spinner"></div><p>Cargando clientes...</p>
-      </div>
-      <div *ngIf="!isLoading() && clientes().length > 0" style="overflow-x:auto;">
-        <table class="orders-table">
-          <thead>
-            <tr><th>Cliente</th><th>Email</th><th>Teléfono</th><th>Saldo Cashback</th><th>Total Compras</th><th>Estado</th><th>Acciones</th></tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let c of clientes()" [style.opacity]="c.bloqueado ? '0.7' : '1'">
-              <td><strong>{{ c.nombre }}</strong></td>
-              <td>{{ c.email }}</td>
-              <td>{{ c.telefono || '—' }}</td>
-              <td><strong style="color:#16a34a;font-size:1.05rem">${{ c.saldoCashback?.toFixed(2) || '0.00' }}</strong></td>
-              <td>${{ c.totalCompras?.toFixed(2) || '0.00' }}</td>
-              <td>
-                <span [class]="c.bloqueado ? 'status-badge cancelled' : 'status-badge completed'">
-                  {{ c.bloqueado ? '🚫 Bloqueado' : '✅ Activo' }}
-                </span>
-              </td>
-              <td style="display:flex;gap:6px;flex-wrap:wrap;padding:12px 8px;">
-                <button (click)="abrirAjuste(c.uid)" class="action-btn edit">💰 Ajustar saldo</button>
-                <button *ngIf="!c.bloqueado" (click)="abrirBloqueo(c, true)" class="action-btn delete">🚫 Bloquear</button>
-                <button *ngIf="c.bloqueado" (click)="abrirBloqueo(c, false)" class="action-btn" style="background:#dcfce7;color:#16a34a;border-color:#86efac;">✅ Desbloquear</button>
-                <button (click)="eliminarCliente(c.uid, c.nombre)" class="action-btn" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5;">🗑️ Eliminar</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div *ngIf="!isLoading() && clientes().length === 0" class="empty-state">
-        <div class="empty-icon">👥</div>
-        <h3>No hay clientes registrados</h3>
-        <p>Los clientes aparecerán aquí cuando se registren en el sitio</p>
-      </div>
-    </div>
-
-    <!-- ── USUARIOS ── -->
-    <div *ngIf="activeTab() === 'usuarios'">
-      <div class="section-header">
-        <div>
-          <h2>🔐 Gestión de Usuarios</h2>
-          <p>Bloquea temporalmente usuarios con pagos pendientes o comportamiento irregular</p>
-        </div>
-      </div>
-      <div *ngIf="isLoading()" class="loading-container">
-        <div class="loading-spinner"></div><p>Cargando usuarios...</p>
-      </div>
-      <div *ngIf="!isLoading() && clientes().length > 0" style="overflow-x:auto;">
-        <table class="orders-table">
-          <thead>
-            <tr><th>Usuario</th><th>Email</th><th>Saldo Cashback</th><th>Estado</th><th>Motivo bloqueo</th><th>Acción</th></tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let c of clientes()" [style.background]="c.bloqueado ? '#fff5f5' : 'white'">
-              <td><strong>{{ c.nombre }}</strong></td>
-              <td>{{ c.email }}</td>
-              <td>${{ c.saldoCashback?.toFixed(2) || '0.00' }}</td>
-              <td>
-                <span [class]="c.bloqueado ? 'status-badge cancelled' : 'status-badge completed'">
-                  {{ c.bloqueado ? '🚫 Bloqueado' : '✅ Activo' }}
-                </span>
-              </td>
-              <td style="font-size:12px;color:#64748b;">{{ c.motivoBloqueo || '—' }}</td>
-              <td style="display:flex;gap:6px;flex-wrap:wrap;">
-                <button *ngIf="!c.bloqueado" (click)="abrirBloqueo(c, true)" class="action-btn delete">🚫 Bloquear</button>
-                <button *ngIf="c.bloqueado" (click)="abrirBloqueo(c, false)" class="action-btn" style="background:#dcfce7;color:#16a34a;border-color:#86efac;">✅ Desbloquear</button>
-                <button (click)="eliminarCliente(c.uid, c.nombre)" class="action-btn" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5;">🗑️ Eliminar</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div *ngIf="!isLoading() && clientes().length === 0" class="empty-state">
-        <div class="empty-icon">🔐</div>
-        <h3>No hay usuarios registrados</h3>
-      </div>
-    </div>
-
-  </div><!-- fin dashboard-content -->
-</div><!-- fin admin-dashboard -->
-
-<!-- ── MODAL BLOG ── -->
-<div *ngIf="showBlogForm()" class="modal-overlay" (click)="closeBlogForm()">
-  <div class="modal-content blog-form-modal" (click)="$event.stopPropagation()">
-    <button class="close-modal-btn" (click)="closeBlogForm()">✕</button>
-    <h2>{{ editingPost ? 'Editar Artículo' : 'Nuevo Artículo' }}</h2>
-    <form (ngSubmit)="saveBlogPost()">
-      <div class="form-group">
-        <label>Título *</label>
-        <input type="text" [(ngModel)]="blogForm.title" name="title" required placeholder="Título del artículo" />
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Categoría *</label>
-          <select [(ngModel)]="blogForm.category" name="category" required>
-            <option value="">Selecciona categoría</option>
-            <option *ngFor="let cat of blogCategories" [value]="cat">{{ cat }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Fecha</label>
-          <input type="text" [(ngModel)]="blogForm.date" name="date" placeholder="Ej: 15 Jun 2025" />
-        </div>
-      </div>
-      <div class="form-group">
-        <label>URL de Imagen</label>
-        <input type="text" [(ngModel)]="blogForm.image" name="image" placeholder="https://..." />
-      </div>
-      <div class="form-group">
-        <label>Extracto * <small>(resumen visible en la lista)</small></label>
-        <textarea [(ngModel)]="blogForm.excerpt" name="excerpt" rows="2" required placeholder="Breve descripción..."></textarea>
-      </div>
-      <div class="form-group">
-        <label>Contenido completo</label>
-        <textarea [(ngModel)]="blogForm.content" name="content" rows="8" placeholder="Escribe el artículo completo..."></textarea>
-      </div>
-      <div class="form-group checkbox-group">
-        <label>
-          <input type="checkbox" [(ngModel)]="blogForm.published" name="published" />
-          Publicar inmediatamente
-        </label>
-      </div>
-      <div class="form-actions">
-        <button type="button" class="cancel-btn" (click)="closeBlogForm()">Cancelar</button>
-        <button type="submit" class="save-btn" [disabled]="isLoading()">
-          {{ isLoading() ? 'Guardando...' : (editingPost ? 'Actualizar' : 'Crear Artículo') }}
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- ── MODAL QR CASHBACK ── -->
-<div *ngIf="showQR()" class="modal-overlay">
-  <div class="modal-content" style="max-width:420px;text-align:center;" (click)="$event.stopPropagation()">
-    <h2 style="color:#FF6B9D;margin:0 0 8px;">📱 QR de Cashback</h2>
-    <p style="color:#64748b;font-size:14px;margin:0 0 20px;">Muéstrale este QR al cliente para que reciba su cashback al escanearlo</p>
-    <img [src]="'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + qrGenerado()"
-      alt="QR Cashback" style="width:220px;height:220px;border-radius:12px;border:2px solid #e5e7eb;" />
-    <p style="font-size:11px;color:#94a3b8;margin:12px 0;word-break:break-all;">{{ qrGenerado() }}</p>
-    <p style="font-size:13px;color:#f59e0b;margin:0 0 20px;">⏳ Expira en 24 horas · Solo un uso</p>
-    <button (click)="cerrarQR()" class="btn-primary">Cerrar</button>
-  </div>
-</div>
-
-<!-- ── MODAL AJUSTE CASHBACK ── -->
-<div *ngIf="showAjuste()" class="modal-overlay">
-  <div class="modal-content" style="max-width:380px;" (click)="$event.stopPropagation()">
-    <h2 style="color:#FF6B9D;margin:0 0 16px;">💰 Ajuste de Saldo</h2>
-    <div class="form-group">
-      <label>Monto <small>(+ para agregar, - para quitar)</small></label>
-      <input type="number" [(ngModel)]="ajusteMonto" (ngModelChange)="ajusteMonto.set($event)"
-        style="width:100%;padding:10px 14px;border:2px solid #e5e7eb;border-radius:10px;font-size:16px;outline:none;" />
-    </div>
-    <div class="form-group">
-      <label>Motivo *</label>
-      <input type="text" [(ngModel)]="ajusteNota" (ngModelChange)="ajusteNota.set($event)"
-        placeholder="Ej: Corrección de saldo"
-        style="width:100%;padding:10px 14px;border:2px solid #e5e7eb;border-radius:10px;font-size:14px;outline:none;" />
-    </div>
-    <div class="form-actions">
-      <button class="cancel-btn" (click)="showAjuste.set(false)">Cancelar</button>
-      <button class="save-btn" (click)="guardarAjuste()">Guardar</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── MODAL BLOQUEO ── -->
-<div *ngIf="showBloqueo()" class="modal-overlay">
-  <div class="modal-content" style="max-width:400px;" (click)="$event.stopPropagation()">
-    <h2 [style.color]="bloqueoAccion() ? '#dc2626' : '#16a34a'" style="margin:0 0 8px;">
-      {{ bloqueoAccion() ? '🚫 Bloquear usuario' : '✅ Desbloquear usuario' }}
-    </h2>
-    <p style="color:#64748b;font-size:14px;margin:0 0 12px;">
-      {{ bloqueoAccion() ? 'El usuario no podrá acceder ni acumular cashback.' : 'El usuario recuperará acceso completo.' }}
-    </p>
-    <p style="font-weight:700;color:#1e293b;margin:0 0 16px;">{{ bloqueoNombre() }}</p>
-    <div *ngIf="bloqueoAccion()" class="form-group">
-      <label>Motivo del bloqueo</label>
-      <input type="text" [(ngModel)]="bloqueoMotivo" (ngModelChange)="bloqueoMotivo.set($event)"
-        placeholder="Ej: Pago pendiente, abuso del sistema..."
-        style="width:100%;padding:10px 14px;border:2px solid #e5e7eb;border-radius:10px;font-size:14px;outline:none;" />
-    </div>
-    <div class="form-actions">
-      <button class="cancel-btn" (click)="showBloqueo.set(false)">Cancelar</button>
-      <button [class]="bloqueoAccion() ? 'save-btn' : 'save-btn'" [style.background]="bloqueoAccion() ? '#dc2626' : '#16a34a'"
-        (click)="confirmarBloqueo()">
-        {{ bloqueoAccion() ? 'Sí, bloquear' : 'Sí, desbloquear' }}
+    <nav class="sidebar-nav">
+      <button (click)="onTabChange('stats')" [class.active]="activeTab === 'stats'" class="nav-item">
+        <span class="nav-icon">📊</span><span>Dashboard</span>
+      </button>
+      <button (click)="onTabChange('products')" [class.active]="activeTab === 'products'" class="nav-item">
+        <span class="nav-icon">📦</span><span>Productos</span>
+      </button>
+      <button (click)="onTabChange('orders')" [class.active]="activeTab === 'orders'" class="nav-item">
+        <span class="nav-icon">🧾</span><span>Pedidos</span>
+      </button>
+      <button (click)="onTabChange('blog')" [class.active]="activeTab === 'blog'" class="nav-item">
+        <span class="nav-icon">📝</span><span>Blog</span>
+      </button>
+      <button (click)="onTabChange('clients')" [class.active]="activeTab === 'clients'" class="nav-item">
+        <span class="nav-icon">👥</span><span>Clientes</span>
+      </button>
+      <button (click)="onTabChange('reviews')" [class.active]="activeTab === 'reviews'" class="nav-item">
+        <span class="nav-icon">⭐</span><span>Reseñas</span>
+      </button>
+      <button (click)="onTabChange('buzon')" [class.active]="activeTab === 'buzon'" class="nav-item">
+        <span class="nav-icon">📬</span><span>Buzón</span>
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <button (click)="logout()" class="logout-btn">
+        <span>🚪</span><span>Cerrar Sesión</span>
       </button>
     </div>
-  </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-title">
+        @if (activeTab === 'stats') { <h1>📊 Dashboard</h1> }
+        @if (activeTab === 'products') { <h1>📦 Productos</h1> }
+        @if (activeTab === 'orders') { <h1>🧾 Pedidos</h1> }
+        @if (activeTab === 'blog') { <h1>📝 Blog</h1> }
+        @if (activeTab === 'clients') { <h1>👥 Clientes Frecuentes</h1> }
+        @if (activeTab === 'reviews') { <h1>⭐ Reseñas de Productos</h1> }
+        @if (activeTab === 'buzon') { <h1>📬 Buzón de Sugerencias</h1> }
+      </div>
+      <div class="topbar-date">{{ today | date:'EEEE, d MMMM yyyy':'':'es' }}</div>
+    </div>
+
+    @if (error) {
+      <div class="alert-error">⚠️ {{ error }}</div>
+    }
+
+    <!-- ===== STATS ===== -->
+    @if (activeTab === 'stats') {
+      @if (isLoading) {
+        <div class="loading-box"><div class="spinner"></div><p>Cargando...</p></div>
+      } @else {
+        <div class="stats-grid">
+          <div class="stat-card pink">
+            <div class="stat-icon">🧾</div>
+            <div class="stat-info"><p>Total Pedidos</p><h2>{{ stats?.total || 0 }}</h2></div>
+          </div>
+          <div class="stat-card yellow">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-info"><p>Pendientes</p><h2>{{ stats?.pending || 0 }}</h2></div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info"><p>Completados</p><h2>{{ stats?.completed || 0 }}</h2></div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info"><p>Ingresos Totales</p><h2>{{ formatPrice(stats?.totalRevenue || 0) }}</h2></div>
+          </div>
+        </div>
+        <div class="quick-summary">
+          <h3>📋 Resumen de estados</h3>
+          <div class="summary-bars">
+            <div class="summary-item"><span class="dot yellow"></span><span>Pendientes</span><strong>{{ stats?.pending || 0 }}</strong></div>
+            <div class="summary-item"><span class="dot blue"></span><span>Confirmados</span><strong>{{ stats?.confirmed || 0 }}</strong></div>
+            <div class="summary-item"><span class="dot green"></span><span>Completados</span><strong>{{ stats?.completed || 0 }}</strong></div>
+            <div class="summary-item"><span class="dot red"></span><span>Cancelados</span><strong>{{ stats?.cancelled || 0 }}</strong></div>
+          </div>
+        </div>
+      }
+    }
+
+    <!-- ===== PRODUCTS ===== -->
+    @if (activeTab === 'products') {
+      <div class="section-header">
+        <p>Administra tu catálogo de productos</p>
+        <a routerLink="/admin/products/new" class="btn-primary">+ Nuevo Producto</a>
+      </div>
+      @if (isLoading) {
+        <div class="loading-box"><div class="spinner"></div><p>Cargando productos...</p></div>
+      } @else if (products.length === 0) {
+        <div class="empty-state"><span>📦</span><p>No hay productos.</p><a routerLink="/admin/products/new" class="btn-primary">Crear producto</a></div>
+      } @else {
+        <div class="products-grid">
+          @for (product of products; track product.id) {
+            <div class="product-card-admin">
+              <div class="product-img-wrap">
+                <img [src]="product.image" [alt]="product.name" />
+                <span [class]="'badge-status ' + (product.available ? 'avail' : 'unavail')">
+                  {{ product.available ? '✓ Disponible' : '✗ No disponible' }}
+                </span>
+              </div>
+              <div class="product-body">
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.description }}</p>
+                <div class="product-price">{{ formatPrice(product.price) }}</div>
+                <div class="product-actions">
+                  <a [routerLink]="['/admin/products', product.id, 'edit']" class="btn-edit">✏️ Editar</a>
+                  <button (click)="deleteProduct(product.id!)" class="btn-delete">🗑️ Eliminar</button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+
+    <!-- ===== ORDERS ===== -->
+    @if (activeTab === 'orders') {
+      <div class="orders-toolbar">
+        <div class="toolbar-filters">
+          <select [(ngModel)]="filtroPedidos" (change)="aplicarFiltros()" class="filter-select">
+            <option value="all">Todos los estados</option>
+            <option value="pending">Pendiente</option>
+            <option value="confirmed">Confirmado</option>
+            <option value="completed">Completado</option>
+            <option value="cancelled">Cancelado</option>
+          </select>
+          <input type="date" [(ngModel)]="filtroFechaInicio" (change)="aplicarFiltros()" class="filter-input" />
+          <input type="date" [(ngModel)]="filtroFechaFin" (change)="aplicarFiltros()" class="filter-input" />
+          <select [(ngModel)]="ordenPedidos" (change)="aplicarFiltros()" class="filter-select">
+            <option value="desc">Más recientes</option>
+            <option value="asc">Más antiguos</option>
+          </select>
+        </div>
+        <div class="toolbar-actions">
+          <button (click)="exportarExcel()" class="btn-excel">📥 Exportar Excel</button>
+          <button (click)="mostrarCorte = !mostrarCorte" class="btn-corte">✂️ Corte de Caja</button>
+        </div>
+      </div>
+
+      <!-- Corte de caja -->
+      @if (mostrarCorte) {
+        <div class="corte-panel">
+          <div class="corte-header">
+            <h3>✂️ Corte de Caja</h3>
+            <button (click)="mostrarCorte = false" class="close-btn">✕</button>
+          </div>
+          <div class="corte-form">
+            <div class="corte-tipo">
+              <button [class.active]="tipoCorte === 'mensual'" (click)="tipoCorte = 'mensual'; cambiarTipoCorte()">📅 Mensual</button>
+              <button [class.active]="tipoCorte === 'semanal'" (click)="tipoCorte = 'semanal'; cambiarTipoCorte()">📆 Semanal</button>
+            </div>
+            <div class="corte-fechas">
+              <div class="form-group">
+                <label>Desde</label>
+                <input type="date" [(ngModel)]="corteFechaInicio" class="filter-input" />
+              </div>
+              <div class="form-group">
+                <label>Hasta</label>
+                <input type="date" [(ngModel)]="corteFechaFin" class="filter-input" />
+              </div>
+              <button (click)="generarCorte()" class="btn-primary">Generar Corte</button>
+            </div>
+          </div>
+          @if (corteResultado) {
+            <div class="corte-resultado">
+              <div class="corte-periodo">📅 {{ corteResultado.periodo }}</div>
+              <div class="corte-stats">
+                <div class="corte-stat"><span>Total pedidos</span><strong>{{ corteResultado.total }}</strong></div>
+                <div class="corte-stat green"><span>Completados</span><strong>{{ corteResultado.completados }}</strong></div>
+                <div class="corte-stat yellow"><span>Pendientes</span><strong>{{ corteResultado.pendientes }}</strong></div>
+                <div class="corte-stat red"><span>Cancelados</span><strong>{{ corteResultado.cancelados }}</strong></div>
+                <div class="corte-stat pink"><span>💰 Ingresos</span><strong>{{ formatPrice(corteResultado.ingresos) }}</strong></div>
+              </div>
+              <button (click)="exportarCorteExcel()" class="btn-excel">📥 Exportar Corte</button>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="orders-count">
+        Mostrando <strong>{{ filteredOrders.length }}</strong> de <strong>{{ orders.length }}</strong> pedidos
+      </div>
+
+      @if (isLoading) {
+        <div class="loading-box"><div class="spinner"></div><p>Cargando pedidos...</p></div>
+      } @else if (filteredOrders.length === 0) {
+        <div class="empty-state"><span>🧾</span><p>No hay pedidos con los filtros seleccionados</p></div>
+      } @else {
+        <div class="orders-table-wrap">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Producto</th>
+                <th>Cant.</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (order of filteredOrders; track order.id) {
+                <tr>
+                  <td>
+                    <div class="customer-name">{{ order.name }}</div>
+                    <div class="customer-detail">{{ order.email }}</div>
+                    <div class="customer-detail">{{ order.phone }}</div>
+                    @if (getClienteRegistrado(order)) {
+                      <div class="customer-registered">✓ Cliente registrado</div>
+                    }
+                  </td>
+                  <td>{{ order.product }}</td>
+                  <td class="text-center">{{ order.quantity }}</td>
+                  <td class="text-pink font-bold">{{ formatPrice(order.total) }}</td>
+                  <td>
+                    <span [class]="'status-badge ' + order.status">{{ getStatusText(order.status) }}</span>
+                  </td>
+                  <td class="text-gray">{{ formatDate(order.createdAt) }}</td>
+                  <td>
+                    <div class="order-actions">
+                      <select [value]="order.status" (change)="updateOrderStatus(order.id!, $event)" class="status-select">
+                        <option value="pending">Pendiente</option>
+                        <option value="confirmed">Confirmado</option>
+                        <option value="completed">Completado</option>
+                        <option value="cancelled">Cancelado</option>
+                      </select>
+
+                      <!-- Botón QR Cashback — solo si el cliente está registrado -->
+                      @if (getClienteRegistrado(order)) {
+                        @if (qrYaGenerado(order)) {
+                          <div class="btn-qr-usado">✅ QR generado</div>
+                        } @else {
+                          <button
+                            (click)="generarQRCashback(order)"
+                            class="btn-qr"
+                            [disabled]="generandoQR === order.id">
+                            {{ generandoQR === order.id ? '⏳ Generando...' : '📱 QR Cashback' }}
+                          </button>
+                        }
+                      }
+
+                      <!-- Eliminar -->
+                      @if (mostrarConfirmEliminar === order.id) {
+                        <div class="confirm-delete">
+                          <span>¿Eliminar?</span>
+                          <button (click)="eliminarPedido(order.id!)" class="btn-confirm-si">Sí</button>
+                          <button (click)="mostrarConfirmEliminar = null" class="btn-confirm-no">No</button>
+                        </div>
+                      } @else {
+                        <button (click)="mostrarConfirmEliminar = order.id!" class="btn-delete-sm">🗑️</button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+
+    <!-- ===== BLOG ===== -->
+    @if (activeTab === 'blog') {
+      <div class="section-header">
+        <p>Administra los artículos del blog</p>
+        <button (click)="openBlogForm()" class="btn-primary">+ Nuevo Artículo</button>
+      </div>
+      @if (isLoading) {
+        <div class="loading-box"><div class="spinner"></div><p>Cargando...</p></div>
+      } @else if (blogPosts.length === 0) {
+        <div class="empty-state"><span>📝</span><p>No hay artículos todavía</p></div>
+      } @else {
+        <div class="blog-grid">
+          @for (post of blogPosts; track post.id) {
+            <div class="blog-card-admin">
+              <div class="blog-img-wrap">
+                <img [src]="post.image" [alt]="post.title" />
+                <span class="blog-cat">{{ post.category }}</span>
+                <span [class]="'blog-pub ' + (post.published ? 'pub' : 'draft')">
+                  {{ post.published ? '✓ Publicado' : '○ Borrador' }}
+                </span>
+              </div>
+              <div class="blog-body">
+                <div class="blog-date">📅 {{ post.date }}</div>
+                <h3>{{ post.title }}</h3>
+                <p>{{ post.excerpt }}</p>
+                <div class="product-actions">
+                  <button (click)="openBlogForm(post)" class="btn-edit">✏️ Editar</button>
+                  <button (click)="togglePostPublished(post)" [class]="'btn-toggle ' + (post.published ? 'unpub' : 'pub')">
+                    {{ post.published ? '📤 Despublicar' : '📥 Publicar' }}
+                  </button>
+                  <button (click)="deleteBlogPost(post.id!)" class="btn-delete">🗑️ Eliminar</button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+
+    <!-- ===== REVIEWS ===== -->
+    @if (activeTab === 'reviews') {
+      <div class="reviews-toolbar">
+        <div class="filter-chips">
+          <button [class.active]="reviewsFiltro === 'todas'" (click)="reviewsFiltro = 'todas'" class="chip">Todas ({{ reviews.length }})</button>
+          <button [class.active]="reviewsFiltro === 'con-admin-like'" (click)="reviewsFiltro = 'con-admin-like'" class="chip">👑 Con me encanta</button>
+        </div>
+      </div>
+      @if (isLoading) {
+        <div class="loading-box"><div class="spinner"></div><p>Cargando reseñas...</p></div>
+      } @else if (reviews.length === 0) {
+        <div class="empty-state"><span>⭐</span><p>No hay reseñas aún</p></div>
+      } @else {
+        <div class="reviews-admin-list">
+          @for (review of getReviewsFiltradas(); track review.id) {
+            <div class="review-admin-card" [class.admin-liked]="review.adminLike">
+              <div class="review-admin-header">
+                <div class="review-admin-info">
+                  <div class="review-avatar">{{ (review.authorName || 'A')[0].toUpperCase() }}</div>
+                  <div>
+                    <strong>{{ review.authorName || 'Anónimo' }}</strong>
+                    <span class="review-product">{{ review.productName }}</span>
+                    <span class="review-fecha">{{ formatDate(review.createdAt) }}</span>
+                  </div>
+                </div>
+                <div class="review-stars-admin">
+                  @for (i of [1,2,3,4,5]; track i) {
+                    <span [class]="i <= review.rating ? 'star-gold' : 'star-empty'">★</span>
+                  }
+                </div>
+              </div>
+              <p class="review-comentario">{{ review.comment }}</p>
+              <div class="review-admin-footer">
+                <div class="review-stats">
+                  <span class="likes-count">🤍 {{ (review.likes || []).length }} clientes</span>
+                  @if (review.adminLike) {
+                    <span class="admin-like-tag">👑 Le encantó al equipo</span>
+                  }
+                </div>
+                <div class="review-actions">
+                  <button (click)="toggleAdminLike(review)"
+                    [class]="review.adminLike ? 'btn-admin-unlike' : 'btn-admin-like'">
+                    {{ review.adminLike ? '💔 Quitar me encanta' : '👑 Me encanta' }}
+                  </button>
+                  <button (click)="eliminarReview(review.id!)" class="btn-delete-sm">🗑️</button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+
+    <!-- ===== BUZÓN ===== -->
+    @if (activeTab === 'buzon') {
+      <div class="buzon-toolbar">
+        <div class="filter-chips">
+          <button [class.active]="sugerenciasFiltro === 'todas'" (click)="sugerenciasFiltro = 'todas'" class="chip">
+            Todas ({{ sugerencias.length }})
+          </button>
+          <button [class.active]="sugerenciasFiltro === 'no-leidas'" (click)="sugerenciasFiltro = 'no-leidas'" class="chip">
+            Sin leer
+          </button>
+          <button [class.active]="sugerenciasFiltro === 'queja'" (click)="sugerenciasFiltro = 'queja'" class="chip">😤 Quejas</button>
+          <button [class.active]="sugerenciasFiltro === 'sugerencia'" (click)="sugerenciasFiltro = 'sugerencia'" class="chip">💡 Sugerencias</button>
+          <button [class.active]="sugerenciasFiltro === 'felicitacion'" (click)="sugerenciasFiltro = 'felicitacion'" class="chip">🎉 Felicitaciones</button>
+        </div>
+      </div>
+      @if (isLoading) {
+        <div class="loading-box"><div class="spinner"></div><p>Cargando...</p></div>
+      } @else if (sugerencias.length === 0) {
+        <div class="empty-state"><span>📬</span><p>No hay mensajes en el buzón</p></div>
+      } @else {
+        <div class="sugerencias-list">
+          @for (s of getSugerenciasFiltradas(); track s.id) {
+            <div class="sugerencia-card" [class.no-leida]="!s.leida">
+              <div class="sug-header">
+                <div class="sug-tipo">{{ getTipoSugerenciaLabel(s.tipo) }}</div>
+                @if (!s.leida) { <span class="badge-nuevo">Nuevo</span> }
+                <span class="sug-fecha">{{ formatDate(s.createdAt) }}</span>
+              </div>
+              <p class="sug-mensaje">{{ s.mensaje }}</p>
+              @if (s.nombre || s.email) {
+                <div class="sug-autor">
+                  @if (s.nombre) { <span>👤 {{ s.nombre }}</span> }
+                  @if (s.email) { <span>✉️ {{ s.email }}</span> }
+                </div>
+              }
+              <div class="sug-actions">
+                <button (click)="marcarSugerenciaLeida(s)"
+                  [class]="s.leida ? 'btn-no-leida' : 'btn-leida'">
+                  {{ s.leida ? '↩️ Marcar no leída' : '✅ Marcar leída' }}
+                </button>
+                <button (click)="eliminarSugerencia(s.id!)" class="btn-delete-sm">🗑️</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+
+    <!-- ===== CLIENTS ===== -->
+    @if (activeTab === 'clients') {
+      <app-admin-clients-page></app-admin-clients-page>
+    }
+
+  </main>
 </div>
 
-<!-- ── NOTIFICACIONES FLOTANTES ── -->
-<div *ngIf="notificaciones().length > 0" class="notif-container">
-  <div *ngFor="let n of notificaciones().slice(0,3)" class="notif-card">
-    <div class="notif-header">
-      <strong>🔔 Nuevo pedido</strong>
-      <button (click)="limpiarNotificaciones()">×</button>
+<!-- Navegación móvil inferior -->
+<nav class="mobile-nav">
+  <button class="mobile-nav-item" [class.active]="activeTab === 'stats'" (click)="onTabChange('stats')">
+    <span class="nav-icon">📊</span>
+    <span>Dashboard</span>
+  </button>
+  <button class="mobile-nav-item" [class.active]="activeTab === 'products'" (click)="onTabChange('products')">
+    <span class="nav-icon">📦</span>
+    <span>Productos</span>
+  </button>
+  <button class="mobile-nav-item" [class.active]="activeTab === 'orders'" (click)="onTabChange('orders')">
+    <span class="nav-icon">🧾</span>
+    <span>Pedidos</span>
+  </button>
+  <button class="mobile-nav-item" [class.active]="activeTab === 'blog'" (click)="onTabChange('blog')">
+    <span class="nav-icon">📝</span>
+    <span>Blog</span>
+  </button>
+  <button class="mobile-nav-item" [class.active]="activeTab === 'clients'" (click)="onTabChange('clients')">
+    <span class="nav-icon">👥</span>
+    <span>Clientes</span>
+  </button>
+  <button class="mobile-nav-item" [class.active]="activeTab === 'reviews'" (click)="onTabChange('reviews')">
+    <span class="nav-icon">⭐</span>
+    <span>Reseñas</span>
+  </button>
+  <button class="mobile-nav-item" [class.active]="activeTab === 'buzon'" (click)="onTabChange('buzon')">
+    <span class="nav-icon">📬</span>
+    <span>Buzón</span>
+  </button>
+</nav>
+
+<!-- Modal Blog -->
+@if (showBlogForm) {
+  <div class="modal-overlay" (click)="closeBlogForm()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ editingPost ? 'Editar Artículo' : 'Nuevo Artículo' }}</h2>
+        <button (click)="closeBlogForm()" class="close-btn">✕</button>
+      </div>
+      <form (ngSubmit)="saveBlogPost()" class="modal-form">
+        <div class="form-group">
+          <label>Título *</label>
+          <input type="text" [(ngModel)]="blogForm.title" name="title" required placeholder="Título del artículo" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Categoría *</label>
+            <select [(ngModel)]="blogForm.category" name="category" required>
+              <option value="">Selecciona...</option>
+              @for (cat of blogCategories; track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fecha</label>
+            <input type="text" [(ngModel)]="blogForm.date" name="date" placeholder="15 Dic 2025" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>URL de Imagen</label>
+          <input type="text" [(ngModel)]="blogForm.image" name="image" placeholder="https://..." />
+        </div>
+        <div class="form-group">
+          <label>Extracto *</label>
+          <textarea [(ngModel)]="blogForm.excerpt" name="excerpt" rows="2" required placeholder="Breve descripción..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Contenido</label>
+          <textarea [(ngModel)]="blogForm.content" name="content" rows="6" placeholder="Contenido completo..."></textarea>
+        </div>
+        <div class="form-check">
+          <input type="checkbox" [(ngModel)]="blogForm.published" name="published" id="published" />
+          <label for="published">Publicar inmediatamente</label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" (click)="closeBlogForm()" class="btn-cancel">Cancelar</button>
+          <button type="submit" class="btn-primary" [disabled]="isLoading">
+            {{ isLoading ? 'Guardando...' : (editingPost ? 'Actualizar' : 'Crear Artículo') }}
+          </button>
+        </div>
+      </form>
     </div>
-    <p class="notif-name">{{ n.name }} · {{ formatPrice(n.total) }}</p>
-    <p class="notif-detail">{{ n.product }} × {{ n.quantity }} kg</p>
-    <button (click)="onTabChange('orders'); limpiarNotificaciones()" class="notif-btn">Ver pedidos →</button>
   </div>
-</div>
+}
+
+<!-- Modal QR Cashback -->
+@if (qrModalData) {
+  <div class="modal-overlay" (click)="cerrarQRModal()">
+    <div class="modal-box qr-modal" (click)="$event.stopPropagation()">
+
+      <!-- Header oscuro -->
+      <div class="qr-modal-header">
+        <div class="qr-header-icon">📱</div>
+        <div>
+          <h2>QR Cashback</h2>
+          <p>{{ qrModalData.clienteNombre }}</p>
+        </div>
+        <button (click)="cerrarQRModal()" class="qr-close-btn">✕</button>
+      </div>
+
+      <!-- Body -->
+      <div class="qr-modal-body">
+
+        <!-- Monto -->
+        <div class="qr-monto-badge">
+          <span class="qr-monto-icon">💰</span>
+          <div>
+            <p>El cliente recibirá</p>
+            <h3>${{ qrModalData.monto.toFixed(2) }}</h3>
+          </div>
+        </div>
+
+        <!-- Instrucción -->
+        <p class="qr-instruccion">
+          Muéstrale este código QR al cliente para que lo escanee con su celular
+        </p>
+
+        <!-- QR Code con marco -->
+        <div class="qr-code-wrapper">
+          <div class="qr-code-frame">
+            <div class="qr-corner tl"></div>
+            <div class="qr-corner tr"></div>
+            <div class="qr-corner bl"></div>
+            <div class="qr-corner br"></div>
+            <img
+              [src]="'https://api.qrserver.com/v1/create-qr-code/?size=220x220&color=1a1a2e&bgcolor=ffffff&data=' + qrModalData.url"
+              alt="QR Cashback"
+              class="qr-image" />
+          </div>
+          <div class="qr-scan-label">
+            <span>📷</span> Escanear con la cámara
+          </div>
+        </div>
+
+        <!-- Chips -->
+        <div class="qr-chips">
+          <div class="qr-chip red"><span>⚠️</span> Un solo uso</div>
+          <div class="qr-chip yellow"><span>⏱️</span> Expira en 24 hrs</div>
+          <div class="qr-chip green"><span>✓</span> 5% del total</div>
+        </div>
+
+        <!-- URL -->
+        <div class="qr-url-box">
+          <span class="qr-url-label">🔗 URL del token</span>
+          <span class="qr-url-text">{{ qrModalData.url }}</span>
+        </div>
+
+        <!-- Botón cerrar -->
+        <button (click)="cerrarQRModal()" class="qr-btn-cerrar">Cerrar</button>
+
+      </div>
+    </div>
+  </div>
+}

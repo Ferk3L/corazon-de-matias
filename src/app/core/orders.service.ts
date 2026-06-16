@@ -124,4 +124,7 @@ export class OrdersService {
       totalRevenue: orders.filter(o => o.status === 'completed').reduce((sum, o) => sum + o.total, 0)
     };
   }
+  async deleteOrder(orderId: string): Promise<void> {
+ await this.firestoreService.deleteDocument('orders', orderId);
+}
 }

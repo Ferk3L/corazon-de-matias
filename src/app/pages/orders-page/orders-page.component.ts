@@ -1,11 +1,11 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { OrdersService } from '../../core/orders.service';
-import { ProductsService, Product } from '../../core/products.service';
 import { ClientAuthService } from '../../core/client-auth.service';
 import { CashbackService } from '../../core/cashback.service';
+import { CartService } from '../../core/cart.service';
 
 @Component({
   selector: 'app-orders-page',
@@ -15,135 +15,160 @@ import { CashbackService } from '../../core/cashback.service';
   styleUrl: './orders-page.component.css'
 })
 export class OrdersPageComponent implements OnInit {
-  // Campos del formulario
-  phone = '';
+  // Datos del formulario — solo para no logueados
   nombre = '';
+  telefono = '';
   email = '';
-  productId = '';
-  productName = '';
-  quantity = 1;
   esADomicilio = false;
   address = '';
   notes = '';
-
-  products = signal<Product[]>([]);
-  isLoading = signal(false);
-  success = signal(false);
-  error = signal('');
+  usarCashback = signal(false);
 
   // Estado del cliente
   clienteLogueado = signal(false);
   clienteUid = signal('');
   clienteSaldo = signal(0);
-  usarCashback = signal(false);
+  correoVerificado = signal(false);
+
+  isLoading = signal(false);
+  success = signal(false);
+  error = signal('');
 
   constructor(
     private ordersService: OrdersService,
-    private productsService: ProductsService,
     private clientAuthService: ClientAuthService,
-    private cashbackService: CashbackService
+    private cashbackService: CashbackService,
+    public cartService: CartService,
+    private router: Router
   ) {}
 
   async ngOnInit() {
-    await Promise.all([this.loadProducts(), this.cargarCliente()]);
+    // Si el carrito está vacío, redirigir al catálogo
+    if (this.cartService.count() === 0) {
+      this.router.navigate(['/catalogo']);
+      return;
+    }
+    await this.cargarCliente();
   }
 
   async cargarCliente() {
     const user = await this.clientAuthService.waitForAuthState();
     if (user) {
+      // Verificar que no sea el admin
+      if (user.email === 'corazondematias@gmail.com') return;
+
       this.clienteLogueado.set(true);
       this.clienteUid.set(user.uid);
-      // Pre-llenar nombre y email desde Firebase Auth
       this.nombre = user.displayName || '';
       this.email = user.email || '';
+      this.correoVerificado.set(user.emailVerified);
 
       const cliente = await this.cashbackService.getCliente(user.uid);
       if (cliente) {
         this.clienteSaldo.set(cliente.saldoCashback);
-        // Si el nombre de Firebase Auth está vacío, usar el de Firestore
         if (!this.nombre && cliente.nombre) this.nombre = cliente.nombre;
+        if (cliente.telefono) this.telefono = cliente.telefono;
       }
     }
   }
 
-  async loadProducts() {
-    try {
-      this.products.set(await this.productsService.getAvailableProducts());
-    } catch (e) {
-      console.error('Error al cargar productos:', e);
-    }
+  getTotalSinDescuento(): number {
+    return this.cartService.total();
   }
 
-  onProductChange() {
-    const selected = this.products().find(p => p.id === this.productId);
-    if (selected) this.productName = selected.name;
-  }
-
-  getTotal(): number {
-    const selected = this.products().find(p => p.id === this.productId);
-    return selected ? selected.price * this.quantity : 0;
-  }
-
-  getTotalFinal(): number {
-    const total = this.getTotal();
+  getTotalConCashback(): number {
     if (this.usarCashback() && this.clienteSaldo() > 0) {
-      return Math.max(0, total - this.clienteSaldo());
+      return Math.max(0, this.cartService.total() - this.clienteSaldo());
     }
-    return total;
+    return this.cartService.total();
   }
 
   async enviarPedido() {
     this.error.set('');
-    if (!this.phone.trim()) { this.error.set('Por favor ingresa tu teléfono'); return; }
-    if (!this.productId) { this.error.set('Por favor selecciona un producto'); return; }
-    if (!this.nombre.trim()) { this.error.set('Por favor ingresa tu nombre'); return; }
-    if (this.esADomicilio && !this.address.trim()) { this.error.set('Por favor ingresa la dirección de entrega'); return; }
+
+    // Validar carrito
+    if (this.cartService.count() === 0) {
+      this.error.set('Tu carrito está vacío'); return;
+    }
+
+    // Validar datos del no logueado
+    if (!this.clienteLogueado()) {
+      if (!this.nombre.trim()) { this.error.set('Por favor ingresa tu nombre'); return; }
+      if (!this.telefono.trim()) { this.error.set('Por favor ingresa tu teléfono'); return; }
+    } else {
+      // Si está logueado, verificar que tenga teléfono
+      if (!this.telefono.trim()) { this.error.set('Por favor ingresa tu teléfono'); return; }
+    }
+
+    if (this.esADomicilio && !this.address.trim()) {
+      this.error.set('Por favor ingresa la dirección de entrega'); return;
+    }
 
     this.isLoading.set(true);
-    this.success.set(false);
-
     try {
-      const total = this.getTotal();
-      const totalFinal = this.getTotalFinal();
-      const descuento = total - totalFinal;
+      const items = this.cartService.items();
+      const totalKg = this.cartService.totalKg();
+      const precioKg = this.cartService.precioKg();
+      const esMayoreo = this.cartService.esMayoreo();
+      const totalFinal = this.getTotalConCashback();
+      const descuento = this.cartService.total() - totalFinal;
 
+      // Crear resumen de productos para el pedido
+      const productosTexto = items.map(i => `${i.name} (${i.kg}kg)`).join(', ');
+      const productosWA = items.map(i => `  • ${i.name}: ${i.kg}kg × $${precioKg} = $${i.kg * precioKg}`).join('\n');
+
+      // Guardar en Firebase
       await this.ordersService.createOrder({
         name: this.nombre,
-        phone: this.phone,
+        phone: this.telefono,
         email: this.email,
-        product: this.productName,
-        quantity: this.quantity,
+        product: productosTexto,
+        quantity: totalKg,
         address: this.esADomicilio ? this.address : 'Recoger en fábrica',
         notes: this.notes || '',
         total: totalFinal,
         clienteUid: this.clienteUid() || '',
-        clienteNombre: this.nombre
+        clienteNombre: this.nombre,
       });
 
+      // Armar mensaje de WhatsApp
       const descuentoTexto = descuento > 0
-        ? `\n💰 *Cashback aplicado:* -$${descuento.toFixed(2)}\n*Total final:* $${totalFinal.toFixed(2)}`
+        ? `\n💰 *Cashback aplicado:* -$${descuento.toFixed(0)}\n*Total final:* $${totalFinal}`
+        : '';
+
+      const mayoreoTexto = esMayoreo
+        ? `\n🎉 *Precio mayoreo aplicado*`
         : '';
 
       const message = `
 *🍬 Nuevo Pedido — Corazón de Matías*
 
 👤 *Cliente:* ${this.nombre}
-📞 *Teléfono:* ${this.phone}
-📧 *Email:* ${this.email}
+📞 *Teléfono:* ${this.telefono}
+${this.email ? `📧 *Email:* ${this.email}` : ''}
 ${this.clienteLogueado() ? '✅ *Cliente registrado*' : ''}
 
-🛍️ *Producto:* ${this.productName}
-⚖️ *Cantidad:* ${this.quantity} kg
-💵 *Subtotal:* $${total.toFixed(2)}${descuentoTexto}
+🛍️ *Productos:*
+${productosWA}
+
+⚖️ *Total:* ${totalKg}kg${mayoreoTexto}
+💵 *Precio por kg:* $${precioKg}
+💵 *Subtotal:* $${this.cartService.total()}${descuentoTexto}
 
 ${this.esADomicilio ? `🏠 *Entrega a domicilio:*\n${this.address}` : '🏪 *Recoger en fábrica*'}
-
-📝 *Notas:* ${this.notes || 'Ninguna'}
+${this.notes ? `\n📝 *Notas:* ${this.notes}` : ''}
       `.trim();
 
-      window.open(`https://wa.me/526181260061?text=${encodeURIComponent(message)}`, '_blank');
+      // En móvil window.open es bloqueado después de await
+      // Usar location.href garantiza que WhatsApp abra siempre
+      const waUrl = `https://wa.me/526181260061?text=${encodeURIComponent(message)}`;
       this.success.set(true);
-      this.resetForm();
+      this.cartService.limpiar();
+
+      // Pequeño delay para que el usuario vea el mensaje de éxito antes de redirigir
+      setTimeout(() => {
+        window.location.href = waUrl;
+      }, 800);
     } catch {
       this.error.set('Error al procesar el pedido. Intenta nuevamente.');
     } finally {
@@ -151,23 +176,7 @@ ${this.esADomicilio ? `🏠 *Entrega a domicilio:*\n${this.address}` : '🏪 *Re
     }
   }
 
-  resetForm() {
-    this.phone = '';
-    this.productId = '';
-    this.productName = '';
-    this.quantity = 1;
-    this.esADomicilio = false;
-    this.address = '';
-    this.notes = '';
-    this.usarCashback.set(false);
-    // No limpiar nombre y email si está logueado
-    if (!this.clienteLogueado()) {
-      this.nombre = '';
-      this.email = '';
-    }
-  }
-
-  quickOrder() {
-    window.open(`https://wa.me/526181260061?text=${encodeURIComponent('Hola, quiero hacer un pedido de gomitas 🍬')}`, '_blank');
+  volverAlCatalogo() {
+    this.router.navigate(['/catalogo']);
   }
 }

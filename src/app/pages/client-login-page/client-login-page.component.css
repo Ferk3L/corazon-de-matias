@@ -97,3 +97,43 @@
   width: calc(50% - 30px); height: 1px; background: rgba(255,255,255,0.1);
 }
 .divider::before { left: 0; } .divider::after { right: 0; }
+/* ===== VERIFICACIÓN EMAIL ===== */
+.verificacion-box {
+  background: #EFF6FF;
+  border: 1.5px solid #93C5FD;
+  border-radius: 14px;
+  padding: 1.2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.verificacion-icon { font-size: 2rem; }
+.verificacion-box h3 { color: #1D4ED8; font-size: 1rem; margin: 0; }
+.verificacion-box p { color: #555; font-size: 0.85rem; margin: 0; line-height: 1.5; }
+
+.btn-reenviar {
+  background: #1D4ED8;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-reenviar:hover { background: #1E40AF; }
+
+.reenvio-exito {
+  background: #F0FFF4;
+  color: #276749;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.verificacion-hint { font-size: 0.78rem; color: #aaa; }

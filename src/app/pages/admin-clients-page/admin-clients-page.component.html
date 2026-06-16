@@ -1,75 +1,75 @@
 <div class="admin-clients">
 
-  <!-- ===== VISTA: LISTA ===== -->
+  <!-- ===== LISTA ===== -->
   @if (vistaActual === 'lista') {
     <div class="section-header">
       <div>
         <h2>👥 Clientes Frecuentes</h2>
         <p>Gestiona los clientes y su saldo de cashback</p>
       </div>
-      <button class="btn-primary" (click)="vistaActual = 'registro-manual'">
-        + Registrar cliente
-      </button>
+      <div class="header-actions">
+        <button class="btn-refresh" (click)="cargarClientes()" title="Recargar">🔄</button>
+        <button class="btn-primary" (click)="vistaActual = 'registro-manual'">+ Registrar cliente</button>
+      </div>
     </div>
 
-    <!-- Buscador -->
     <div class="search-bar">
       <span class="search-icon">🔍</span>
-      <input
-        type="text"
-        [(ngModel)]="busqueda"
-        (input)="filtrarClientes()"
-        placeholder="Buscar por nombre, correo o teléfono..."
-      />
+      <input type="text" [(ngModel)]="busqueda" (input)="filtrarClientes()"
+        placeholder="Buscar por nombre, correo o teléfono..." />
     </div>
 
-    <!-- Loading -->
     @if (isLoading) {
-      <div class="loading-state">
-        <div class="spinner"></div>
-        <p>Cargando clientes...</p>
+      <div class="loading-state"><div class="spinner"></div><p>Cargando clientes...</p></div>
+    } @else if (clientesFiltrados.length === 0) {
+      <div class="empty-state">
+        <span>👥</span>
+        <p>No se encontraron clientes</p>
+        <button class="btn-primary" (click)="cargarClientes()">Recargar</button>
       </div>
-    }
-
-    <!-- Lista clientes -->
-    @if (!isLoading) {
-      @if (clientesFiltrados.length === 0) {
-        <div class="empty-state">
-          <span>👥</span>
-          <p>No se encontraron clientes</p>
-        </div>
-      } @else {
-        <div class="clientes-grid">
-          @for (cliente of clientesFiltrados; track cliente.uid) {
-            <div class="cliente-card" (click)="verDetalle(cliente)">
-              <div class="cliente-avatar">{{ cliente.nombre[0].toUpperCase() }}</div>
-              <div class="cliente-info">
-                <h3>{{ cliente.nombre }}</h3>
-                <p class="cliente-email">{{ cliente.email }}</p>
-                @if (cliente.telefono) {
-                  <p class="cliente-tel">📞 {{ cliente.telefono }}</p>
-                }
-                <p class="cliente-fecha">Desde {{ formatFecha(cliente.fechaRegistro) }}</p>
-              </div>
-              <div class="cliente-cashback">
-                <span class="cashback-label">Cashback</span>
-                <span class="cashback-monto">${{ cliente.saldoCashback.toFixed(2) }}</span>
-              </div>
+    } @else {
+      <div class="clientes-grid">
+        @for (cliente of clientesFiltrados; track cliente.uid) {
+          <div class="cliente-card" [class.bloqueado]="cliente.bloqueado" (click)="verDetalle(cliente)">
+            <div class="cliente-avatar" [class.bloqueado-avatar]="cliente.bloqueado">
+              {{ cliente.nombre[0].toUpperCase() }}
             </div>
-          }
-        </div>
-      }
+            <div class="cliente-info">
+              <div class="cliente-nombre-row">
+                <h3>{{ cliente.nombre }}</h3>
+                @if (cliente.bloqueado) {
+                  <span class="badge-bloqueado">🔒 Bloqueado</span>
+                }
+              </div>
+              <p class="cliente-email">{{ cliente.email }}</p>
+              @if (cliente.telefono) {
+                <p class="cliente-tel">📞 {{ cliente.telefono }}</p>
+              }
+              <p class="cliente-fecha">Desde {{ formatFecha(cliente.fechaRegistro) }}</p>
+            </div>
+            <div class="cliente-cashback">
+              <span class="cashback-label">Cashback</span>
+              <span class="cashback-monto" [class.bloqueado-monto]="cliente.bloqueado">
+                ${{ cliente.saldoCashback.toFixed(2) }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
     }
   }
 
-  <!-- ===== VISTA: DETALLE CLIENTE ===== -->
+  <!-- ===== DETALLE ===== -->
   @if (vistaActual === 'detalle' && clienteSeleccionado) {
     <div class="detalle-header">
       <button class="btn-back" (click)="volverALista()">← Volver</button>
       <h2>{{ clienteSeleccionado.nombre }}</h2>
+      @if (clienteSeleccionado.bloqueado) {
+        <span class="badge-bloqueado">🔒 Bloqueado</span>
+      }
     </div>
 
-    <!-- Info cliente -->
+    <!-- Info + Saldo -->
     <div class="detalle-grid">
       <div class="detalle-info-card">
         <h3>Información del cliente</h3>
@@ -78,36 +78,74 @@
         <div class="info-row"><span>📅 Registro</span><strong>{{ formatFecha(clienteSeleccionado.fechaRegistro) }}</strong></div>
         <div class="info-row"><span>🛒 Total compras</span><strong>${{ clienteSeleccionado.totalCompras.toFixed(2) }}</strong></div>
         <div class="info-row"><span>🎁 Bono QR</span><strong>{{ clienteSeleccionado.bonoBienvenidaUsado ? '✅ Aplicado' : '❌ No usado' }}</strong></div>
+        <div class="info-row"><span>🔒 Estado</span>
+          <strong [class]="clienteSeleccionado.bloqueado ? 'texto-rojo' : 'texto-verde'">
+            {{ clienteSeleccionado.bloqueado ? 'Bloqueado' : 'Activo' }}
+          </strong>
+        </div>
       </div>
-
-      <!-- Saldo cashback -->
       <div class="saldo-card">
         <p class="saldo-label">💰 Saldo cashback</p>
         <p class="saldo-monto">${{ clienteSeleccionado.saldoCashback.toFixed(2) }}</p>
       </div>
     </div>
 
+    <!-- Acciones del cliente -->
+    <div class="acciones-card">
+      <h3>⚙️ Acciones del cliente</h3>
+      <div class="acciones-grid">
+
+        <!-- Bloquear / Desbloquear -->
+        @if (confirmBloquear === clienteSeleccionado.uid) {
+          <div class="confirm-box" [class.desbloquear]="clienteSeleccionado.bloqueado">
+            <p>{{ clienteSeleccionado.bloqueado ? '¿Desbloquear a este cliente?' : '¿Bloquear a este cliente? No podrá iniciar sesión.' }}</p>
+            <div class="confirm-btns">
+              <button (click)="toggleBloqueo(clienteSeleccionado)" class="btn-confirm-si" [disabled]="isSaving">
+                {{ isSaving ? 'Procesando...' : 'Confirmar' }}
+              </button>
+              <button (click)="confirmBloquear = null" class="btn-confirm-no">Cancelar</button>
+            </div>
+          </div>
+        } @else {
+          <button
+            (click)="confirmBloquear = clienteSeleccionado.uid"
+            [class]="clienteSeleccionado.bloqueado ? 'btn-accion desbloquear' : 'btn-accion bloquear'">
+            {{ clienteSeleccionado.bloqueado ? '🔓 Desbloquear cliente' : '🔒 Bloquear cliente' }}
+          </button>
+        }
+
+        <!-- Eliminar -->
+        @if (confirmEliminar === clienteSeleccionado.uid) {
+          <div class="confirm-box eliminar">
+            <p>⚠️ ¿Eliminar a <strong>{{ clienteSeleccionado.nombre }}</strong>? Se borrarán sus datos de cashback. Podrá volver a registrarse.</p>
+            <div class="confirm-btns">
+              <button (click)="eliminarCliente(clienteSeleccionado.uid)" class="btn-confirm-eliminar" [disabled]="isSaving">
+                {{ isSaving ? 'Eliminando...' : 'Sí, eliminar' }}
+              </button>
+              <button (click)="confirmEliminar = null" class="btn-confirm-no">Cancelar</button>
+            </div>
+          </div>
+        } @else {
+          <button (click)="confirmEliminar = clienteSeleccionado.uid" class="btn-accion eliminar">
+            🗑️ Eliminar cliente
+          </button>
+        }
+
+      </div>
+
+      @if (mensajeExito) { <div class="msg-exito">✅ {{ mensajeExito }}</div> }
+      @if (mensajeError) { <div class="msg-error">⚠️ {{ mensajeError }}</div> }
+    </div>
+
     <!-- Ajuste manual -->
     <div class="ajuste-card">
       <h3>🔧 Ajuste manual de cashback</h3>
       <p class="ajuste-hint">Usa esto si un pedido no registró el cashback automáticamente</p>
-
       <div class="ajuste-form">
         <div class="tipo-selector">
-          <button
-            [class.active]="ajuste.tipo === 'sumar'"
-            (click)="ajuste.tipo = 'sumar'"
-            class="tipo-btn sumar">
-            ➕ Sumar
-          </button>
-          <button
-            [class.active]="ajuste.tipo === 'restar'"
-            (click)="ajuste.tipo = 'restar'"
-            class="tipo-btn restar">
-            ➖ Restar
-          </button>
+          <button [class.active]="ajuste.tipo === 'sumar'" (click)="ajuste.tipo = 'sumar'" class="tipo-btn sumar">➕ Sumar</button>
+          <button [class.active]="ajuste.tipo === 'restar'" (click)="ajuste.tipo = 'restar'" class="tipo-btn restar">➖ Restar</button>
         </div>
-
         <div class="ajuste-inputs">
           <div class="form-group">
             <label>Monto ($)</label>
@@ -118,14 +156,6 @@
             <input type="text" [(ngModel)]="ajuste.nota" placeholder="Ej: Pedido #123 no registró cashback" />
           </div>
         </div>
-
-        @if (mensajeError) {
-          <div class="msg-error">⚠️ {{ mensajeError }}</div>
-        }
-        @if (mensajeExito) {
-          <div class="msg-exito">✅ {{ mensajeExito }}</div>
-        }
-
         <button class="btn-primary" (click)="aplicarAjuste()" [disabled]="isSaving">
           {{ isSaving ? 'Aplicando...' : 'Aplicar ajuste' }}
         </button>
@@ -135,7 +165,6 @@
     <!-- Historial -->
     <div class="historial-card">
       <h3>📋 Historial de movimientos</h3>
-
       @if (isLoadingHistorial) {
         <div class="loading-state"><div class="spinner"></div></div>
       } @else if (historialCliente.length === 0) {
@@ -159,16 +188,14 @@
     </div>
   }
 
-  <!-- ===== VISTA: REGISTRO MANUAL ===== -->
+  <!-- ===== REGISTRO MANUAL ===== -->
   @if (vistaActual === 'registro-manual') {
     <div class="detalle-header">
       <button class="btn-back" (click)="volverALista()">← Volver</button>
       <h2>Registrar cliente manualmente</h2>
     </div>
-
     <div class="registro-card">
       <p class="ajuste-hint">Usa esto cuando el sistema falle o el cliente no pueda registrarse solo</p>
-
       <div class="form-grid">
         <div class="form-group">
           <label>Nombre completo *</label>
@@ -187,14 +214,8 @@
           <input type="number" [(ngModel)]="nuevoCliente.saldoInicial" placeholder="0.00" min="0" />
         </div>
       </div>
-
-      @if (mensajeError) {
-        <div class="msg-error">⚠️ {{ mensajeError }}</div>
-      }
-      @if (mensajeExito) {
-        <div class="msg-exito">✅ {{ mensajeExito }}</div>
-      }
-
+      @if (mensajeError) { <div class="msg-error">⚠️ {{ mensajeError }}</div> }
+      @if (mensajeExito) { <div class="msg-exito">✅ {{ mensajeExito }}</div> }
       <button class="btn-primary" (click)="registrarClienteManual()" [disabled]="isSaving">
         {{ isSaving ? 'Registrando...' : 'Registrar cliente' }}
       </button>

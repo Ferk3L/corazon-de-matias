@@ -135,3 +135,32 @@
   }
 }
 
+
+/* Auth required */
+.review-auth-required, .review-not-verified {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 16px; padding: 1.2rem 1.5rem;
+}
+.lock-icon { font-size: 2rem; }
+.review-auth-required strong, .review-not-verified strong { color: white; display: block; font-size: 0.95rem; margin-bottom: 2px; }
+.review-auth-required p, .review-not-verified p { color: rgba(255,255,255,0.55); font-size: 0.82rem; margin: 0; }
+.btn-login-review {
+  margin-left: auto; background: linear-gradient(135deg, #FF6B9D, #f97316);
+  color: white; padding: 8px 18px; border-radius: 20px; font-weight: 800;
+  font-size: 0.85rem; text-decoration: none; white-space: nowrap; transition: all 0.2s;
+}
+.btn-login-review:hover { transform: translateY(-1px); }
+.review-as { font-size: 0.82rem; color: rgba(255,255,255,0.55); margin-bottom: 1rem; }
+.review-as strong { color: rgba(255,255,255,0.85); }
+.review-form { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 1.5rem; }
+.review-form h3 { font-size: 1rem; font-weight: 800; color: white; margin-bottom: 4px; }
+.stars-label { font-size: 0.82rem; color: rgba(255,255,255,0.55); }
+.review-field { margin: 1rem 0; }
+.review-field textarea { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.18); border-radius: 10px; color: white; font-size: 0.875rem; outline: none; font-family: inherit; resize: vertical; }
+.review-field textarea::placeholder { color: rgba(255,255,255,0.35); }
+.review-field small { color: rgba(255,255,255,0.35); font-size: 0.75rem; }
+.btn-submit-review { width: 100%; padding: 11px; background: linear-gradient(135deg, #FF6B9D, #f97316); color: white; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.btn-submit-review:hover { transform: translateY(-1px); }
+.btn-submit-review:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.review-success { text-align: center; padding: 1.5rem; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.25); border-radius: 16px; color: #4ade80; font-weight: 700; font-size: 0.95rem; }

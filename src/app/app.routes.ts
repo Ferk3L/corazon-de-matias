@@ -13,6 +13,7 @@ import { ClientRegisterPageComponent } from './pages/client-register-page/client
 import { ClientLoginPageComponent } from './pages/client-login-page/client-login-page.component';
 import { ClientDashboardPageComponent } from './pages/client-dashboard-page/client-dashboard-page.component';
 import { CashbackQrPageComponent } from './pages/cashback-qr-page/cashback-qr-page.component';
+import { BuzonSugerenciasComponent } from './pages/buzon-sugerencias/buzon-sugerencias.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -38,5 +39,6 @@ export const routes: Routes = [
   { path: 'admin/products/new', component: AdminProductFormPageComponent, title: 'Admin - Nuevo Producto', canActivate: [authGuard] },
   { path: 'admin/products/:id/edit', component: AdminProductFormPageComponent, title: 'Admin - Editar Producto', canActivate: [authGuard] },
 
+  { path: 'buzon', component: BuzonSugerenciasComponent },
   { path: '**', redirectTo: '' }
 ];
